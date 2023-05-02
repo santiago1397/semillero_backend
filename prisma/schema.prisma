@@ -1,0 +1,346 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgres"
+  url      = env("DATABASE_URL")
+}
+
+// API tokens
+model ApiTokens {
+  id             Int     @id @default(autoincrement())
+  user_id        Int
+  name           String?
+  token          String @unique
+  type           String?
+  createdAt      String? @map("created_at")
+  expiresAt      String? @map("expires_at")
+  @@map("api_tokens")
+}
+
+// Usuarios
+model Users {
+  id              Int                 @id @default(autoincrement())
+  email           String              @unique
+  password        String
+  rememberMeToken String?
+  deleted         Boolean             @default(false)
+  createdBy       Int                 @default(0)
+  updatedBy       Int?
+  version         Int                 @default(0)
+  profile         UsersProfiles?
+  userRole        UsersRoles[]
+}
+
+// Perfiles de usuarios
+model UsersProfiles {
+  id        Int     @id @default(autoincrement())
+  user      Users   @relation(fields: [userId], references: [id])
+  userId    Int     @unique
+  firstName String
+  lastName  String
+  identity  String?
+  phone     String?
+}
+
+// Roles
+model Roles {
+  id          Int            @id @default(autoincrement())
+  name        String         @unique
+  description String?
+  deleted     Boolean        @default(false)
+  createBy    Int            @default(0)
+  updatedBy   Int?
+  version     Int            @default(0)
+  userRole    UsersRoles[]
+  moduleRole  ModulesRoles[]
+}
+
+// Roles de usuarios por ente y sus responsabilidades
+model UsersRoles {
+  user       Users @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: NoAction)
+  userId     Int
+  role       Roles @relation(fields: [roleId], references: [id], onUpdate: Cascade, onDelete: NoAction)
+  roleId     Int
+  ente       Entes @relation(fields: [enteId], references: [id], onUpdate: Cascade, onDelete: NoAction)
+  enteId     Int
+  assignedBy Int   @default(0)
+
+  @@unique([userId, roleId, enteId])
+}
+
+// Entes
+model Entes {
+  id              Int                 @id @default(autoincrement())
+  name            String              @unique
+  acronim         String?
+  deleted         Boolean             @default(false)
+  createdBy       Int                 @default(0)
+  updatedBy       Int?
+  version         Int                 @default(0)
+  userRole        UsersRoles[]
+  responsibleEnte ResponsiblesEntes[]
+}
+
+// Responsabilidades por cada miembro de los entes
+model Responsabilities {
+  id           Int                 @id @default(autoincrement())
+  name         String              @unique
+  description  String?
+  deleted      Boolean             @default(false)
+  createBy     Int                 @default(0)
+  updatedBy    Int?
+  version      Int                 @default(0)
+  responsibles ResponsiblesEntes[]
+}
+
+model ResponsiblesEntes {
+  id                Int              @id @default(autoincrement())
+  ente              Entes            @relation(fields: [enteId], references: [id], onUpdate: Cascade, onDelete: NoAction)
+  enteId            Int
+  responsible       Responsabilities @relation(fields: [responsabilityId], references: [id], onUpdate: Cascade, onDelete: NoAction)
+  responsabilityId  Int
+  profession        Professions @relation(fields: [professionId], references: [id], onUpdate: Cascade, onDelete: NoAction)
+  professionId      Int
+  firstName         String
+  lastName          String
+  identity          String
+  gender            Int
+  birthDate         String
+  email             String
+  phone             String
+  assignedBy        Int              @default(0)
+}
+
+model Estados {
+  id         Int          @id @default(autoincrement())
+  nombre     String       @unique
+  municipios Municipios[]
+}
+
+model Municipios {
+  id         Int          @id @default(autoincrement())
+  nombre     String
+  estadoId   Int
+  estado     Estados      @relation(fields: [estadoId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  parroquias Parroquias[]
+}
+
+model Parroquias {
+  id          Int        @id @default(autoincrement())
+  nombre      String
+  municipioId Int
+  municipios  Municipios @relation(fields: [municipioId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+}
+
+// Sitios
+model Sites {
+  id                   Int            @id @default(autoincrement())
+  name                 String         @unique
+  typeId               Int
+  type                 TypeSites      @relation(fields: [typeId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  typeSite             Int            @default(0) // 0 Publica - 1 Privada - 2 Semi Privada
+  pedagogicalObjective String?
+  activities           String?
+  direction            String?
+  parroquiaId          Int
+  phone                String
+  email                String?
+  active               Boolean        @default(false)
+  biosecurity          Boolean        @default(false)
+  bathrooms            Boolean        @default(false)
+  parking              Boolean        @default(false)
+  medicalService       Boolean        @default(false)
+  diningRoom           Boolean        @default(false)
+  socialNetworks       String?
+  googleMapLink        String?
+  createBy             Int            @default(0)
+  updatedBy            Int?
+  version              Int            @default(0)
+  manager              ManagersSites?
+}
+
+// Tipos de sitios
+model TypeSites {
+  id        Int     @id @default(autoincrement())
+  name      String  @unique
+  createBy  Int     @default(0)
+  updatedBy Int?
+  version   Int     @default(0)
+  sites     Sites[]
+}
+
+// Administradores de los Sitios
+model ManagersSites {
+  id         Int     @id @default(autoincrement())
+  lastName   String
+  firstName  String
+  identity   String
+  birthdate  String
+  position   String
+  phone      String
+  localPhone String?
+  email      String
+  profession String
+  createBy   Int     @default(0)
+  updatedBy  Int?
+  version    Int     @default(0)
+  site       Sites   @relation(fields: [siteId], references: [id])
+  siteId     Int     @unique
+}
+
+// Escuelas
+model Schools {
+  id            Int              @id @default(autoincrement())
+  codPlantel    String           @unique
+  name          String
+  type          Int              @default(0) //0 False = Publico 1 = Privado
+  estadoId      Int
+  municipioId   Int
+  parroquiaId   Int
+  direction     String
+  phone         String
+  totalStudents Int              @default(0)
+  count         Int              @default(0)
+  createBy      Int              @default(0)
+  updatedBy     Int?
+  version       Int              @default(0)
+  routes        RoutesPlanned[]
+  manager       ManagersSchools?
+}
+
+// Directores
+model ManagersSchools {
+  id          Int                 @id @default(autoincrement())
+  firstName   String
+  lastName    String
+  identity    String
+  estadoId    Int?
+  municipioId Int?
+  parroquiaId Int?
+  phone       String
+  localPhone  String?
+  email       String
+  createBy    Int                 @default(0)
+  updatedBy   Int?
+  version     Int                 @default(0)
+  school      Schools             @relation(fields: [codPlantel], references: [codPlantel])
+  codPlantel  String              @unique
+}
+
+// Representantes
+model Parents {
+  id              Int                 @id @default(autoincrement())
+  firstName       String
+  lastName        String
+  identity        String?
+  birthDate       String
+  relationshipId  Int
+  relationship    Relationship        @relation(fields: [relationshipId], references: [id], onUpdate: Cascade, onDelete: NoAction)
+  phone           String
+  localPhone      String?
+  email           String
+  professionId    Int
+  profession      Professions         @relation(fields: [professionId], references: [id], onUpdate: Cascade, onDelete: NoAction)
+  createBy        Int                 @default(0)
+  updatedBy       Int?
+  version         Int                 @default(0)
+}
+
+// Parentescos
+model Relationship {
+  id        Int       @id @default(autoincrement())
+  name      String    @unique
+  createBy  Int       @default(0)
+  updatedBy Int?
+  version   Int       @default(0)
+  parents   Parents[]
+}
+
+// Profesiones
+model Professions {
+  id        Int       @id @default(autoincrement())
+  name      String    @unique
+  createBy  Int       @default(0)
+  updatedBy Int?
+  version   Int       @default(0)
+  parent    Parents[]
+  responsiblesEntes ResponsiblesEntes[] 
+}
+
+// Estudiantes
+model Students {
+  id          Int     @id @default(autoincrement())
+  codPlantel  String
+  firstName   String
+  lastName    String
+  identity    String?
+  birthDate   String
+  gender      Int     @default(0) // 0 = Femenimo, 1 = Masculino	
+  gradeId     Int
+  sizeShirt   String
+  disability  String  @default("NO")
+  direction   String
+  estadoId    Int
+  municipioId Int
+  parroquiaId Int
+  phone       String
+  localPhone  String?
+  createBy    Int     @default(0)
+  updatedBy   Int?
+  version     Int     @default(0)
+}
+
+// Actividades ludicas
+model Activities {
+  id        Int             @id @default(autoincrement())
+  name      String          @unique
+  deleted   Boolean         @default(false)
+  createBy  Int             @default(0)
+  updatedBy Int?
+  version   Int             @default(0)
+  routes    RoutesPlanned[]
+}
+
+// Rutas planificadas
+model RoutesPlanned {
+  id          Int        @id @default(autoincrement())
+  name        String     @unique
+  siteId      Int
+  codPlantel  String
+  plantel     Schools    @relation(fields: [codPlantel], references: [codPlantel])
+  activityId  Int
+  activity    Activities @relation(fields: [activityId], references: [id])
+  datePlanned DateTime   @default(now())
+  createBy    Int        @default(0)
+  updatedBy   Int?
+  version     Int        @default(0)
+}
+
+// Modulos del sistema
+model Modules {
+  id          Int            @id @default(autoincrement())
+  name        String         @unique
+  description String?
+  path        String
+  deleted     Boolean        @default(false)
+  createdBy   Int            @default(0)
+  updatedBy   Int?
+  version     Int            @default(0)
+  modules     ModulesRoles[]
+}
+
+// Asignacion de acceso al modulo por roles
+model ModulesRoles {
+  module     Modules @relation(fields: [moduleId], references: [id], onUpdate: Cascade, onDelete: NoAction)
+  moduleId   Int
+  role       Roles   @relation(fields: [roleId], references: [id], onUpdate: Cascade, onDelete: NoAction)
+  roleId     Int
+  assignedBy Int     @default(0)
+
+  @@unique([moduleId, roleId])
+}
