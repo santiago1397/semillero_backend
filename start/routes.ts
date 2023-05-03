@@ -39,7 +39,6 @@ Route.group(() => {
   Route.resource('managers-schools', 'ManagersSchoolsController').apiOnly();
   Route.resource('managers-sites', 'ManagersSitesController').apiOnly();
   Route.resource('modules', 'ModulesController').apiOnly();
-  Route.resource('modules-roles', 'ModulesRolesController').apiOnly();
   Route.resource('municipios', 'MunicipiosController').apiOnly();
   Route.resource('parents', 'ParentsController').apiOnly();
   Route.resource('parroquias', 'ParroquiasController').apiOnly();
@@ -53,5 +52,4 @@ Route.group(() => {
   Route.resource('students', 'StudentsController').apiOnly();
   Route.resource('type-sites', 'TypeSitesController').apiOnly();
   Route.resource('users-profiles', 'UsersProfilesController').apiOnly();
-  Route.resource('users-roles', 'UsersRolesController').apiOnly();
 }).prefix("api").middleware('auth:api');

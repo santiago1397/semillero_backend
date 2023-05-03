@@ -50,7 +50,7 @@ export default class UsersController {
     }
   }
 
-  public async create({}: HttpContextContract) {}
+  
 
   public async store({ request }: HttpContextContract) {
     const data = request.body() as Users;
@@ -102,7 +102,6 @@ export default class UsersController {
     }
   }
 
-  public async edit({}: HttpContextContract) {}
 
   public async update({ request, params }: HttpContextContract) {
     try {
