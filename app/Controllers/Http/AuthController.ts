@@ -1,3 +1,4 @@
+import { prisma } from "@ioc:Adonis/Addons/Prisma";
 import { HttpContextContract } from "@ioc:Adonis/Core/HttpContext";
 
 export default class AuthController {
@@ -5,9 +6,37 @@ export default class AuthController {
     const email = request.input("email");
     const password = request.input("password");
     const token = await auth.use("api").attempt(email, password, {
-      expiresIn: "10 days",
+      expiresIn: "1 day",
     });
-    return token.toJSON();
+    
+    const user = prisma.users.findMany({
+      where: { email : email },
+      select: {
+        id: true,
+        email: true,
+        createdBy: true,
+        updatedBy: true,
+        version: true,
+        profile: {
+          select: {
+            firstName: true,
+            lastName: true
+          },
+        },
+        userRole: {
+          select: {
+            roleId: true,
+            role: {
+              select : {
+                name: true
+              }
+            },
+            enteId: true
+          }
+        }
+      },
+    })
+    return { token : token, data: user };
   }
 
   public async register({ request, auth }: HttpContextContract) {

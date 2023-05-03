@@ -1,4 +1,15 @@
 /**
  * Put all seeders filename here. It will be executed based on the order
  */
-export default ['Ente', 'Role', 'User']
+export default [
+  'Module', 
+  'Responsability', 
+  'Relationship',
+  'TypesSite',
+  'Activity',
+  'Profession',
+  'Ente', 
+  'ResponsabilitiesEnte',
+  'Role', 
+  'User'
+]

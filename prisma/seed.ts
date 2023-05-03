@@ -1006,28 +1006,28 @@ async function main() {
   console.log(`Start seeding ...`)
 
   // Load responsabilities on database
-  const responsabilities = await prisma.responsabilities.createMany({ data: responsabilitiesData, skipDuplicates: true });
+  await prisma.responsabilities.createMany({ data: responsabilitiesData, skipDuplicates: true });
 
   // Load relationships on database
-  const relationship = await prisma.relationship.createMany({ data: relationShipData, skipDuplicates: true });
+  await prisma.relationship.createMany({ data: relationShipData, skipDuplicates: true });
 
   // Load Modules on database
-  const modules = await prisma.modules.createMany({ data: modulesData, skipDuplicates: true });
+  await prisma.modules.createMany({ data: modulesData, skipDuplicates: true });
 
   // Load Activities on database
-  const activities = await prisma.activities.createMany({ data: activitiesData, skipDuplicates: true });
+  await prisma.activities.createMany({ data: activitiesData, skipDuplicates: true });
 
   // Load TypesSites on database
-  const typeSites = await prisma.typeSites.createMany({ data: typesSitesData, skipDuplicates: true });
+  await prisma.typeSites.createMany({ data: typesSitesData, skipDuplicates: true });
 
   // Load Entes on database
-  const ente = await prisma.entes.createMany({ data: entesData, skipDuplicates: true });
+  await prisma.entes.createMany({ data: entesData, skipDuplicates: true });
 
   // Load roles on database 
-  const role = await prisma.roles.createMany({ data: rolesData, skipDuplicates: true });
+  await prisma.roles.createMany({ data: rolesData, skipDuplicates: true });
 
   // Load professions on database
-  const professions = await prisma.professions.createMany({ data: professionsData, skipDuplicates: true });
+  await prisma.professions.createMany({ data: professionsData, skipDuplicates: true });
   
   // Load user on database
   for (const u of usersData) {
@@ -1036,10 +1036,10 @@ async function main() {
   }
 
   // Load Permissios on database
-  const permission = await prisma.modulesRoles.createMany({ data: modulesPerRolesData, skipDuplicates: true  });
+  await prisma.modulesRoles.createMany({ data: modulesPerRolesData, skipDuplicates: true  });
 
   // Load responsabilities on database
-  const responsabilitiesPerEntes = await prisma.responsiblesEntes.createMany({ data: responsabilitiesEntesData})
+  await prisma.responsiblesEntes.createMany({ data: responsabilitiesEntesData})
   console.log(`Seeding finished...`)
 }
 
