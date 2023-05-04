@@ -29,6 +29,7 @@ Route.group(() => {
   Route.post("login", "AuthController.login");
   Route.post("recover-password", "AuthController.recoverPassword");
   Route.post("reset-password", "AuthController.resetPassword");
+  Route.post('logout', "AuthController.logout");
 }).prefix("api");
 
 Route.group(() => {
@@ -52,4 +53,4 @@ Route.group(() => {
   Route.resource('students', 'StudentsController').apiOnly();
   Route.resource('type-sites', 'TypeSitesController').apiOnly();
   Route.resource('users-profiles', 'UsersProfilesController').apiOnly();
-}).prefix("api").middleware('auth:api');
+}).prefix("api").middleware(['auth']);

@@ -9,5 +9,6 @@ export const enumErrors = {
 export const enumSuccess = {
   CREATE: 'Se ha registrado un nuevo registro',
   UPDATE: 'Se ha actualizado el registro exitosamente',
-  DELETE: 'Se ha eliminado el registro exitosamente'
+  DELETE: 'Se ha eliminado el registro exitosamente',
+  LOGOUT: 'Ha cerrado sesion exitosamente',
 }

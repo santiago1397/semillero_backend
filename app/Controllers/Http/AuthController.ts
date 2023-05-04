@@ -1,16 +1,27 @@
 import { prisma } from "@ioc:Adonis/Addons/Prisma";
 import { HttpContextContract } from "@ioc:Adonis/Core/HttpContext";
+import { schema, rules } from '@ioc:Adonis/Core/Validator'
+import { enumSuccess } from "App/Utils/utils";
 
 export default class AuthController {
   public async login({ request, auth }: HttpContextContract) {
-    const email = request.input("email");
-    const password = request.input("password");
-    const token = await auth.use("api").attempt(email, password, {
+    const payload = await request.validate({
+      schema: schema.create({
+        email: schema.string({}, [
+          rules.email()
+        ]),
+        password: schema.string(),
+      }),
+      messages: {
+        required: 'El {{ field }} es requerido para iniciar sesion',
+      }
+    });
+    const token = await auth.use("api").attempt(payload.email, payload.password, {
       expiresIn: "1 day",
     });
-    
-    const user = prisma.users.findMany({
-      where: { email : email },
+
+    const user = await prisma.users.findMany({
+      where: { email: payload.email },
       select: {
         id: true,
         email: true,
@@ -27,16 +38,28 @@ export default class AuthController {
           select: {
             roleId: true,
             role: {
-              select : {
+              select: {
                 name: true
               }
             },
-            enteId: true
+            enteId: true,
+            ente: {
+              select: {
+                name: true
+              }
+            }
           }
         }
       },
     })
-    return { token : token, data: user };
+    return { token: token, data: user };
+  }
+
+  public async logout({ auth } : HttpContextContract ){
+    await auth.use('api').revoke()
+    return {
+      message: enumSuccess.LOGOUT
+    }
   }
 
   public async register({ request, auth }: HttpContextContract) {
@@ -57,13 +80,13 @@ export default class AuthController {
     const email = request.input("email");
     const user = await User.findByOrFail('email', email);
 
-    if(user){
+    if (user) {
       const token = await auth.use('api').generate(user, {
         expiresIn: '10 mins'
       })
 
       console.log('token:', token);
-      
+
       let mailer = await new Mailer(user, 'Recuperación de acceso Sistema Correspondencia', true, 'recover', { user: { fullname: user.username }, url: `localhost:3333/reset-password/${token.tokenHash}` }, '', []).preview();
       return mailer;
     } else {
@@ -71,7 +94,7 @@ export default class AuthController {
     }
   }
 
-  public async resetPassword({ request }: HttpContextContract){
+  public async resetPassword({ request }: HttpContextContract) {
 
   }
 }
