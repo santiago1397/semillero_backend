@@ -6,6 +6,7 @@ import { schema } from '@ioc:Adonis/Core/Validator'
 export default class MunicipiosController {
   public async index({ request }: HttpContextContract) {
     try {
+      
       // Pagination
       const pagination = request.qs()
         ? mapToPagination(request.qs() as IPagination)
@@ -20,8 +21,10 @@ export default class MunicipiosController {
       })
 
       const [total, data] = await prisma.$transaction([
+        
         prisma.municipios.count(),
         prisma.municipios.findMany({
+          
           ...pagination,
           where: filters,
         }),

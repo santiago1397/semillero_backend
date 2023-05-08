@@ -15,6 +15,7 @@ export default class EntesController {
       const filters = await request.validate({
         schema: schema.create({
           name: schema.string.optional(),
+          acronim: schema.string.optional(),
           deleted: schema.boolean.optional(),
         }),
       })

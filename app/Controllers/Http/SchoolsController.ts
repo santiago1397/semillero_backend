@@ -1,34 +1,38 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { prisma } from '@ioc:Adonis/Addons/Prisma'
 import { Schools } from '@prisma/client'
-import { enumErrors, enumSuccess } from '../../Utils/utils'
-
+import { IPagination, enumErrors, enumSuccess, mapToPagination } from '../../Utils/utils'
+import { schema } from '@ioc:Adonis/Core/Validator'
 export default class SchoolsController {
-  public async index({}: HttpContextContract) {
+  public async index({ request }: HttpContextContract) {
     try {
+      // Pagination
+      const pagination = request.qs()
+        ? mapToPagination(request.qs() as IPagination)
+        : ({} as IPagination)
+
+      // Filters
+      const filters = await request.validate({
+        schema: schema.create({
+          codPlantel: schema.string.optional(),
+          name: schema.string.optional(),
+          type: schema.number.optional(),
+          estadoId: schema.number.optional(),
+          municipioId: schema.number.optional(),
+          parroquiaId: schema.number.optional(),
+          direction: schema.string.optional(),
+          phone: schema.string.optional(),
+          totalStudents: schema.number.optional(),
+          count: schema.number.optional(),
+          deleted: schema.boolean.optional(),
+        }),
+      })
+
       const [total, data] = await prisma.$transaction([
         prisma.schools.count(),
         prisma.schools.findMany({
-          take: 10,
-          skip: 0,
-          select: {
-            id: true,
-            codPlantel: true,
-            name: true,
-            type: true,
-            estadoId: true,
-            municipioId: true,
-            parroquiaId: true,
-            direction: true,
-            phone: true,
-            totalStudents: true,
-            count: true,
-            createBy: true,
-            updatedBy: true,
-            version: true,
-            routes: true,
-            manager: true,
-          },
+          ...pagination,
+          where: filters,
         }),
       ])
 
