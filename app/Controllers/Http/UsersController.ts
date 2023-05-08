@@ -1,36 +1,51 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { prisma } from '@ioc:Adonis/Addons/Prisma'
 import { Users } from '@prisma/client'
-import { IPagination, enumErrors, enumSuccess, mapToPagination } from '../../Utils/utils'
-import { schema } from '@ioc:Adonis/Core/Validator'
+import { enumErrors, enumSuccess } from '../../Utils/utils'
+
 export default class UsersController {
-  public async index({ request }: HttpContextContract) {
+  public async index({}: HttpContextContract) {
     try {
-      // Pagination
-      const pagination = request.qs()
-        ? mapToPagination(request.qs() as IPagination)
-        : ({} as IPagination)
-
-      // Filters
-      const filters = await request.validate({
-        schema: schema.create({
-          email: schema.string.optional(),
-          password: schema.string.optional(),
-          rememberMeToken: schema.string.optional(),
-          deleted: schema.boolean.optional(),
-        }),
-      })
-
       const [total, data] = await prisma.$transaction([
         prisma.users.count(),
         prisma.users.findMany({
-          ...pagination,
-          where: filters,
+          take: 10,
+          skip: 0,
+          select: {
+            id: true,
+            email: true,
+            createdBy: true,
+            updatedBy: true,
+            version: true,
+            profile: {
+              select: {
+                firstName: true,
+                lastName: true,
+              },
+            },
+            userRole: {
+              select: {
+                roleId: true,
+                role: {
+                  select: {
+                    name: true,
+                  },
+                },
+                enteId: true,
+                ente: {
+                  select: {
+                    name: true,
+                  },
+                },
+              },
+            },
+          },
         }),
       ])
 
       return { total, data }
-    } catch (error) {
+    }
+ catch (error) {
       console.log(error)
       return { message: enumErrors.DEFAULT }
     }
