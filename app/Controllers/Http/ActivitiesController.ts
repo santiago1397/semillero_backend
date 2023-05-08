@@ -21,7 +21,7 @@ export default class ActivitiesController {
       })
 
       const [total, data] = await prisma.$transaction([
-        prisma.activities.count(),
+        prisma.activities.count({ where: filters }),
         prisma.activities.findMany({
           ...pagination,
           where: filters,

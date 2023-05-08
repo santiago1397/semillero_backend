@@ -2,6 +2,7 @@ import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { prisma } from '@ioc:Adonis/Addons/Prisma'
 import { Users } from '@prisma/client'
 import { enumErrors, enumSuccess } from '../../Utils/utils'
+import Hash from '@ioc:Adonis/Core/Hash'
 
 export default class UsersController {
   public async index({}: HttpContextContract) {
@@ -52,9 +53,31 @@ export default class UsersController {
   }
 
   public async store({ request }: HttpContextContract) {
-    const data = request.body() as Users
+    const password = await Hash.make(request.body().password);
     try {
-      await prisma.users.create({ data: { ...data } })
+      const data = request.body().map(e => (
+        {
+          email: e.email,
+          password: password,
+          profile: {
+            create: {
+              firstName: e.firstName,
+              lastName: e.lastName,
+              identity: e.identity
+            }
+          },
+          userRole: {
+            create: {
+              roleId: e.role,
+              enteId: e.ente
+            }
+          }
+        }
+      ));
+
+      console.log('Password', password);
+      console.log('Data', data)
+      await prisma.users.create({ data })
       return { message: enumSuccess.CREATE }
     } catch (err) {
       console.log(err)

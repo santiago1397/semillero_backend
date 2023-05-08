@@ -103,5 +103,5 @@ export default class AuthController {
     }
   }
 
-  public async resetPassword({ request }: HttpContextContract) {}
+  public async resetPassword({ }: HttpContextContract) {}
 }

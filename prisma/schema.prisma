@@ -199,10 +199,10 @@ model Schools {
   codPlantel    String           @unique
   name          String
   type          Int              @default(0) //0 False = Publico 1 = Privado
-  estadoId      Int
-  municipioId   Int
-  parroquiaId   Int
-  direction     String
+  estadoId      Int?
+  municipioId   Int?
+  parroquiaId   Int?
+  direction     String?
   phone         String
   totalStudents Int              @default(0)
   count         Int              @default(0)
