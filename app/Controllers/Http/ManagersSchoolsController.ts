@@ -1,29 +1,29 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { prisma } from '@ioc:Adonis/Addons/Prisma'
 import { ManagersSchools } from '@prisma/client'
-import { enumErrors, enumSuccess } from '../../Utils/utils'
-
+import { IPagination, enumErrors, enumSuccess, mapToPagination } from '../../Utils/utils'
+import { schema } from '@ioc:Adonis/Core/Validator'
 export default class ManagersSchoolsController {
-  public async index({}: HttpContextContract) {
+  public async index({ request }: HttpContextContract) {
     try {
+      // Pagination
+      const pagination = request.qs()
+        ? mapToPagination(request.qs() as IPagination)
+        : ({} as IPagination)
+
+      // Filters
+      const filters = await request.validate({
+        schema: schema.create({
+          firstName: schema.string.optional(),
+          deleted: schema.boolean.optional(),
+        }),
+      })
+
       const [total, data] = await prisma.$transaction([
         prisma.managersSchools.count(),
         prisma.managersSchools.findMany({
-          take: 10,
-          skip: 0,
-          select: {
-            id: true,
-            firstName: true,
-            lastName: true,
-            identity: true,
-            phone: true,
-            localPhone: true,
-            email: true,
-            createBy: true,
-            updatedBy: true,
-            version: true,
-            codPlantel: true,
-          },
+          ...pagination,
+          where: filters,
         }),
       ])
 

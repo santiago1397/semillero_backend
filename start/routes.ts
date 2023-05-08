@@ -25,14 +25,15 @@ Route.get('/', async () => {
 })
 
 Route.group(() => {
-  Route.post("register", "AuthController.register");
-  Route.post("login", "AuthController.login");
-  Route.post("recover-password", "AuthController.recoverPassword");
-  Route.post("reset-password", "AuthController.resetPassword");
-  Route.post('logout', "AuthController.logout");
-}).prefix("api");
+  Route.post('register', 'AuthController.register')
+  Route.post('login', 'AuthController.login')
+  Route.post('recover-password', 'AuthController.recoverPassword')
+  Route.post('reset-password', 'AuthController.resetPassword')
+  Route.post('logout', 'AuthController.logout')
+}).prefix('api')
 
 Route.group(() => {
+<<<<<<< HEAD
   Route.resource('users', 'UsersController').apiOnly();
   Route.resource('activities', 'ActivitiesController').apiOnly();
   Route.resource('entes', 'EntesController').apiOnly();
@@ -54,3 +55,28 @@ Route.group(() => {
   Route.resource('type-sites', 'TypeSitesController').apiOnly();
   Route.resource('users-profiles', 'UsersProfilesController').apiOnly();
 }).prefix("api").middleware(['auth']);
+=======
+  Route.resource('users', 'UsersController').apiOnly()
+  Route.resource('activities', 'ActivitiesController').apiOnly()
+  Route.resource('entes', 'EntesController').apiOnly()
+  Route.resource('estados', 'EstadosController').apiOnly()
+  Route.resource('managers-schools', 'ManagersSchoolsController').apiOnly()
+  Route.resource('managers-sites', 'ManagersSitesController').apiOnly()
+  Route.resource('modules', 'ModulesController').apiOnly()
+  Route.resource('municipios', 'MunicipiosController').apiOnly()
+  Route.resource('parents', 'ParentsController').apiOnly()
+  Route.resource('parroquias', 'ParroquiasController').apiOnly()
+  Route.resource('professions', 'ProfessionsController').apiOnly()
+  Route.resource('relationship', 'RelationshipController').apiOnly()
+  Route.resource('responsabilities', 'ResponsabilitiesController').apiOnly()
+  Route.resource('responsibles-entes', 'ResponsiblesEntesController').apiOnly()
+  Route.resource('routes-planned', 'RoutesPlannedController').apiOnly()
+  Route.resource('schools', 'Schools').apiOnly()
+  Route.resource('sites', 'SitesController').apiOnly()
+  Route.resource('students', 'StudentsController').apiOnly()
+  Route.resource('type-sites', 'TypeSitesController').apiOnly()
+  Route.resource('users-profiles', 'UsersProfilesController').apiOnly()
+})
+  .prefix('api')
+  .middleware(['auth'])
+>>>>>>> 3e57e6c412df149dd0858f01f9b7fdea7c25a43e

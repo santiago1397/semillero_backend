@@ -1,25 +1,29 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { prisma } from '@ioc:Adonis/Addons/Prisma'
 import { UsersProfiles } from '@prisma/client'
-import { enumErrors, enumSuccess } from '../../Utils/utils'
-
+import { IPagination, enumErrors, enumSuccess, mapToPagination } from '../../Utils/utils'
+import { schema } from '@ioc:Adonis/Core/Validator'
 export default class UsersProfilesController {
-  public async index({}: HttpContextContract) {
+  public async index({ request }: HttpContextContract) {
     try {
+        // Pagination
+        const pagination = request.qs()
+        ? mapToPagination(request.qs() as IPagination)
+        : ({} as IPagination)
+
+      // Filters
+      const filters = await request.validate({
+        schema: schema.create({
+          name: schema.string.optional(),
+          deleted: schema.boolean.optional(),
+        }),
+      })
+
       const [total, data] = await prisma.$transaction([
-        prisma.usersProfiles.count(),
-        prisma.usersProfiles.findMany({
-          take: 10,
-          skip: 0,
-          select: {
-            id: true,
-            user: true,
-            userId: true,
-            firstName: true,
-            lastName: true,
-            identity: true,
-            phone: true,
-          },
+        prisma.activities.count(),
+        prisma.activities.findMany({
+          ...pagination,
+          where: filters,
         }),
       ])
 

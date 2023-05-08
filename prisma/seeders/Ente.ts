@@ -4,219 +4,219 @@ import { Prisma } from '@prisma/client'
 const entesData: Prisma.EntesCreateInput[] = [
   {
     name: 'MINISTERIO DEL PODER POPULAR PARA CIENCIA Y TECNOLOGIA',
-    acronim: 'MINCYT'
+    acronim: 'MINCYT',
   },
   {
     name: 'AGENCIA BOLIVARIANA PARA ACTIVIDADES ESPACIALES',
-    acronim: 'ABAE'
+    acronim: 'ABAE',
   },
   {
     name: 'CENTRO NACIONAL DE DESARROLLO E INVESTIGACIÓN DE TELECOMUNICACIONES',
-    acronim: 'CENDIT'
+    acronim: 'CENDIT',
   },
   {
     name: 'CENTRO NACIONAL DE DESARROLLO E INVESTIGACIÓN EN TECNOLOGÍAS LIBRES',
-    acronim: 'CENDITEL'
+    acronim: 'CENDITEL',
   },
   {
     name: 'CENTRO NACIONAL DE TECNOLOGÍA DE LA INFORMACIÓN',
-    acronim: 'CNTI'
+    acronim: 'CNTI',
   },
   {
     name: 'COMISIÓN NACIONAL DE LAS TECNOLOGÍAS DE INFORMACIÓN',
-    acronim: 'CONATI'
+    acronim: 'CONATI',
   },
   {
     name: 'COMPAÑÍA ANÓNIMA NACIONAL TELÉFONOS DE VENEZUELA',
-    acronim: 'CANTV'
+    acronim: 'CANTV',
   },
   {
     name: 'CORPORACIÓN SOCIALISTA DE LAS TELECOMUNICACIONES Y SERVICIOS POSTALES, C.A.',
-    acronim: 'CORPOSTEL'
+    acronim: 'CORPOSTEL',
   },
   {
     name: 'SUPERINTENDENCIA DE SERVICIOS DE CERTIFICACIÓN ELECTRÓNICA',
-    acronim: 'SUSCERTE'
+    acronim: 'SUSCERTE',
   },
   {
     name: 'TELECOM VENEZUELA, C.A.',
-    acronim: 'TELECOM'
+    acronim: 'TELECOM',
   },
   {
     name: 'TELECOMUNICACIONES GRAN CARIBE, S.A.',
-    acronim: 'TGC'
+    acronim: 'TGC',
   },
   {
     name: 'TELECOMUNICACIONES MOVILNET, C.A.',
-    acronim: 'MOVILNET'
+    acronim: 'MOVILNET',
   },
   {
     name: 'FONDO DE INVESTIGACIÓN Y DESARROLLO DE LAS TELECOMUNICACIONES',
-    acronim: 'FIDETEL'
+    acronim: 'FIDETEL',
   },
   {
     name: 'ACADEMIA DE CIENCIAS AGRÍCOLAS DE VENEZUELA',
-    acronim: 'ACAV'
+    acronim: 'ACAV',
   },
   {
     name: 'CENTRO DE INVESTIGACIONES DE ASTRONOMÍA "FRANCISCO J. DUARTE"',
-    acronim: 'CIDA'
+    acronim: 'CIDA',
   },
   {
     name: 'CENTRO DE INVESTIGACIONES DEL ESTADO PARA LA PRODUCCIÓN EXPERIMENTAL AGROINDUSTRIAL',
-    acronim: 'CIEPE'
+    acronim: 'CIEPE',
   },
   {
     name: 'CENTRO NACIONAL DE INVESTIGACIÓN Y CERTIFICACIÓN EN VIVIENDA, HABITAT Y DESARROLLO URBANO',
-    acronim: 'CENVIH'
+    acronim: 'CENVIH',
   },
   {
     name: 'CENTRO NACIONAL DE TECNOLOGÍA QUÍMICA',
-    acronim: 'CNTQ'
+    acronim: 'CNTQ',
   },
   {
     name: 'CORPORACIÓN PARA EL DESARROLLO CIENTÍFICO Y TECNOLÓGICO, S.A.',
-    acronim: 'CODECYT'
+    acronim: 'CODECYT',
   },
   {
     name: 'FONDO NACIONAL DE CIENCIA, TECNOLOGÍA E INNOVACIÓN',
-    acronim: 'FONACIT'
+    acronim: 'FONACIT',
   },
   {
     name: 'INSTITUTO DE ESTUDIOS AVANZADOS',
-    acronim: 'IDEA'
+    acronim: 'IDEA',
   },
   {
     name: 'FUNDACIÓN INSTITUTO DE INGENIERÍA PARA LA INVESTIGACIÓN Y DESARROLLO TECNOLÓGICO',
-    acronim: 'FIIDT'
+    acronim: 'FIIDT',
   },
   {
     name: 'INSTITUTO VENEZOLANO DE INVESTIGACIONES CIENTÍFICAS',
-    acronim: 'IVIC'
+    acronim: 'IVIC',
   },
   {
     name: 'INSTITUTO ZULIANO DE INVESTIGACIONES TECNOLÓGICAS',
-    acronim: 'INZIT'
+    acronim: 'INZIT',
   },
   {
     name: 'OBSERVATORIO NACIONAL DE CIENCIA, TECNOLOGÍA E INNOVACIÓN',
-    acronim: 'ONCTI'
+    acronim: 'ONCTI',
   },
   {
     name: 'ZONA LIBRE CULTURAL, CIENTÍFICA Y TECNOLÓGICA DEL ESTADO MÉRIDA',
-    acronim: 'ZOLCCYT'
+    acronim: 'ZOLCCYT',
   },
   {
     name: 'TV	FUNDACIÓN CONCIENCIA TV',
-    acronim: 'CONCIENCIA'
+    acronim: 'CONCIENCIA',
   },
   {
     name: 'FUNDACIÓN INFOCENTRO',
-    acronim: 'INFOCENTRO'
+    acronim: 'INFOCENTRO',
   },
   {
     name: 'CANAIMA	INDUSTRIAS CANAIMA, C.A.',
-    acronim: 'INDUSTRIAS'
+    acronim: 'INDUSTRIAS',
   },
   {
     name: 'INSTITUTO POSTAL TELEGRÁFICO DE VENEZUELA',
-    acronim: 'IPOSTEL'
+    acronim: 'IPOSTEL',
   },
   {
     name: 'FUNDACITE AMAZONAS',
-    acronim: 'FUNDACITE AMA'
+    acronim: 'FUNDACITE AMA',
   },
   {
     name: 'FUNDACITE ANZOÁTEGUI',
-    acronim: 'FUNDACITE ANZ'
+    acronim: 'FUNDACITE ANZ',
   },
   {
     name: 'FUNDACITE APURE',
-    acronim: 'FUNDACITE APU'
+    acronim: 'FUNDACITE APU',
   },
   {
     name: 'FUNDACITE ARAGUA',
-    acronim: 'FUNDACITE ARA'
+    acronim: 'FUNDACITE ARA',
   },
   {
     name: 'FUNDACITE BARINAS',
-    acronim: 'FUNDACITE BAR'
+    acronim: 'FUNDACITE BAR',
   },
   {
     name: 'FUNDACITE BOLÍVAR',
-    acronim: 'FUNDACITE BOL'
+    acronim: 'FUNDACITE BOL',
   },
   {
     name: 'FUNDACITE CARABOBO',
-    acronim: 'FUNDACITE CAR'
+    acronim: 'FUNDACITE CAR',
   },
   {
     name: 'FUNDACITE COJEDES',
-    acronim: 'FUNDACITE COJ'
+    acronim: 'FUNDACITE COJ',
   },
   {
     name: 'FUNDACITE DELTA AMACURO',
-    acronim: 'FUNDACITE DAC'
+    acronim: 'FUNDACITE DAC',
   },
   {
     name: 'FUNDACITE FALCÓN',
-    acronim: 'FUNDACITE FAL'
+    acronim: 'FUNDACITE FAL',
   },
   {
     name: 'FUNDACITE GUÁRICO',
-    acronim: 'FUNDACITE GUA'
+    acronim: 'FUNDACITE GUA',
   },
   {
     name: 'FUNDACITE LARA',
-    acronim: 'FUNDACITE LAR'
+    acronim: 'FUNDACITE LAR',
   },
   {
     name: 'FUNDACITE MÉRIDA',
-    acronim: 'FUNDACITE MER'
+    acronim: 'FUNDACITE MER',
   },
   {
     name: 'FUNDACITE MIRANDA',
-    acronim: 'FUNDACITE MIR'
+    acronim: 'FUNDACITE MIR',
   },
   {
     name: 'FUNDACITE MONAGAS',
-    acronim: 'FUNDACITE MON'
+    acronim: 'FUNDACITE MON',
   },
   {
     name: 'FUNDACITE NUEVA ESPARTA',
-    acronim: 'FUNDACITE NVE'
+    acronim: 'FUNDACITE NVE',
   },
   {
     name: 'FUNDACITE PORTUGUESA',
-    acronim: 'FUNDACITE POR'
+    acronim: 'FUNDACITE POR',
   },
   {
     name: 'FUNDACITE SUCRE',
-    acronim: 'FUNDACITE SUC'
+    acronim: 'FUNDACITE SUC',
   },
   {
     name: 'FUNDACITE TÁCHIRA',
-    acronim: 'FUNDACITE TAC'
+    acronim: 'FUNDACITE TAC',
   },
   {
     name: 'FUNDACITE TRUJILLO',
-    acronim: 'FUNDACITE TRU'
+    acronim: 'FUNDACITE TRU',
   },
   {
     name: 'FUNDACITE YARACUY',
-    acronim: 'FUNDACITE YAR'
+    acronim: 'FUNDACITE YAR',
   },
   {
     name: 'FUNDACITE ZULIA',
-    acronim: 'FUNDACITE ZUL'
-  }
-];
+    acronim: 'FUNDACITE ZUL',
+  },
+]
 
 export default class EnteSeeder extends PrismaSeederBase {
   public static developmentOnly = false
 
   public async run() {
     // Load Entes on database
-    const ente = await prisma.entes.createMany({ data: entesData, skipDuplicates: true });
+    const ente = await prisma.entes.createMany({ data: entesData, skipDuplicates: true })
   }
 }

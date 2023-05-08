@@ -17,7 +17,7 @@ import { AuthConfig } from '@ioc:Adonis/Addons/Auth'
 |
 */
 const authConfig: AuthConfig = {
-  guard: 'web',
+  guard: 'api',
   guards: {
     /*
     |--------------------------------------------------------------------------
@@ -76,7 +76,7 @@ const authConfig: AuthConfig = {
         |
         */
         model: 'users',
-        hashDriver: 'argon'
+        hashDriver: 'argon',
       },
     },
     /*
@@ -120,7 +120,7 @@ const authConfig: AuthConfig = {
         identifierKey: 'id',
         uids: ['email'],
         model: 'users',
-        hashDriver: 'argon'
+        hashDriver: 'argon',
       },
     },
     /*
@@ -182,7 +182,7 @@ const authConfig: AuthConfig = {
         |
         */
         model: 'users',
-        hashDriver: 'argon'
+        hashDriver: 'argon',
       },
     },
   },
