@@ -1,23 +1,29 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { prisma } from '@ioc:Adonis/Addons/Prisma'
 import { Municipios } from '@prisma/client'
-import { enumErrors, enumSuccess } from '../../Utils/utils'
-
+import { IPagination, enumErrors, enumSuccess, mapToPagination } from '../../Utils/utils'
+import { schema } from '@ioc:Adonis/Core/Validator'
 export default class MunicipiosController {
-  public async index({}: HttpContextContract) {
+  public async index({ request }: HttpContextContract) {
     try {
+      // Pagination
+      const pagination = request.qs()
+        ? mapToPagination(request.qs() as IPagination)
+        : ({} as IPagination)
+
+      // Filters
+      const filters = await request.validate({
+        schema: schema.create({
+          nombre: schema.string.optional(),
+          estadoId: schema.number.optional(),
+        }),
+      })
+
       const [total, data] = await prisma.$transaction([
         prisma.municipios.count(),
         prisma.municipios.findMany({
-          take: 10,
-          skip: 0,
-          select: {
-            id: true,
-            nombre: true,
-            estadoId: true,
-            estado: true,
-            parroquias: true,
-          },
+          ...pagination,
+          where: filters,
         }),
       ])
 
