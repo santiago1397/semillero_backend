@@ -48,7 +48,7 @@ Route.group(() => {
   Route.resource('responsabilities', 'ResponsabilitiesController').apiOnly()
   Route.resource('responsibles-entes', 'ResponsiblesEntesController').apiOnly()
   Route.resource('routes-planned', 'RoutesPlannedController').apiOnly()
-  Route.resource('schools', 'Schools').apiOnly()
+  Route.resource('schools', 'SchoolsController').apiOnly()
   Route.resource('sites', 'SitesController').apiOnly()
   Route.resource('students', 'StudentsController').apiOnly()
   Route.resource('type-sites', 'TypeSitesController').apiOnly()

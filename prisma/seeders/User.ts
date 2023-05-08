@@ -10,10 +10,6 @@ export default class UserSeeder extends PrismaSeederBase {
       const user = await prisma.users.create({ data: u })
       console.log(`User created with id: ${user.id}`)
     }
-    // await prisma.users.create({
-    //   data: await this.getUsers(),
-    //   skipDuplicates: true,
-    // })
   }
 
   public async generatePassword(password) {
