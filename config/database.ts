@@ -43,17 +43,16 @@ const databaseConfig: DatabaseConfig = {
         database: Env.get('PG_DB_NAME'),
       },
       seeders: {
-        paths: ['./database/seeders/MainSeeder']
+        paths: ['./database/seeders/MainSeeder'],
       },
       migrations: {
         naturalSort: true,
-        paths: ['./database/migrations']
+        paths: ['./database/migrations'],
       },
       healthCheck: false,
       debug: false,
     },
-
-  }
+  },
 }
 
 export default databaseConfig

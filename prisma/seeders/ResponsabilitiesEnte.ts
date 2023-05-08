@@ -1,7 +1,7 @@
 import { prisma, PrismaSeederBase } from '@ioc:Adonis/Addons/Prisma'
-import { Prisma } from '@prisma/client';
+import { Prisma } from '@prisma/client'
 
-const responsabilitiesEntesData : Prisma.ResponsiblesEntesCreateManyInput[] = [
+const responsabilitiesEntesData: Prisma.ResponsiblesEntesCreateManyInput[] = [
   {
     enteId: 31,
     responsabilityId: 5,
@@ -12,7 +12,7 @@ const responsabilitiesEntesData : Prisma.ResponsiblesEntesCreateManyInput[] = [
     gender: 1,
     birthDate: '',
     email: 'camejo1984@gmail.com',
-    phone: ''
+    phone: '',
   },
   {
     enteId: 32,
@@ -24,7 +24,7 @@ const responsabilitiesEntesData : Prisma.ResponsiblesEntesCreateManyInput[] = [
     phone: '',
     gender: 1,
     birthDate: '',
-    email: 'camejo1984@gmail.com'
+    email: 'camejo1984@gmail.com',
   },
   {
     enteId: 33,
@@ -36,7 +36,7 @@ const responsabilitiesEntesData : Prisma.ResponsiblesEntesCreateManyInput[] = [
     phone: '',
     gender: 1,
     birthDate: '',
-    email: 'ronnyeguez@gmail.com'
+    email: 'ronnyeguez@gmail.com',
   },
   {
     enteId: 34,
@@ -265,13 +265,16 @@ const responsabilitiesEntesData : Prisma.ResponsiblesEntesCreateManyInput[] = [
     phone: '',
     gender: 1,
     birthDate: '',
-  }
+  },
 ]
 
 export default class ResponsabilitiesEnteSeeder extends PrismaSeederBase {
   public static developmentOnly = false
 
   public async run() {
-    await prisma.responsiblesEntes.createMany({ data: responsabilitiesEntesData, skipDuplicates: true });
+    await prisma.responsiblesEntes.createMany({
+      data: responsabilitiesEntesData,
+      skipDuplicates: true,
+    })
   }
 }

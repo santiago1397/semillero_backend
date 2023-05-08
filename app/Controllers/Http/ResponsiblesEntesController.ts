@@ -52,6 +52,7 @@ export default class ResponsiblesEntesController {
   public async show({ params }: HttpContextContract) {
     try {
       const { id } = params
+
       const [data] = await prisma.$transaction([
         prisma.responsiblesEntes.findMany({
           where: { id: Number(id) },
