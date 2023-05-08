@@ -15,6 +15,14 @@ export default class ManagersSchoolsController {
       const filters = await request.validate({
         schema: schema.create({
           firstName: schema.string.optional(),
+          lastName: schema.string.optional(),
+          identity: schema.string.optional(),
+          estadoId: schema.number.optional(),
+          municipioId: schema.number.optional(),
+          parroquiaId: schema.number.optional(),
+          phone: schema.string.optional(),
+          localPhone: schema.string.optional(),
+          email: schema.string.optional(),
           deleted: schema.boolean.optional(),
         }),
       })

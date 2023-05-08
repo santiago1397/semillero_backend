@@ -1,41 +1,45 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { prisma } from '@ioc:Adonis/Addons/Prisma'
 import { Sites } from '@prisma/client'
-import { enumErrors, enumSuccess } from '../../Utils/utils'
-
+import { IPagination, enumErrors, enumSuccess, mapToPagination } from '../../Utils/utils'
+import { schema } from '@ioc:Adonis/Core/Validator'
 export default class SitesController {
-  public async index({}: HttpContextContract) {
+  public async index({ request }: HttpContextContract) {
     try {
+      // Pagination
+      const pagination = request.qs()
+        ? mapToPagination(request.qs() as IPagination)
+        : ({} as IPagination)
+
+      // Filters
+      const filters = await request.validate({
+        schema: schema.create({
+          name: schema.string.optional(),
+          typeId: schema.number.optional(),
+          typeSite: schema.number.optional(),
+          pedagogicalObjective: schema.string.optional(),
+          activities: schema.string.optional(),
+          direction: schema.string.optional(),
+          parroquiaId: schema.number.optional(),
+          phone: schema.string.optional(),
+          email: schema.string.optional(),
+          active: schema.boolean.optional(),
+          biosecurity: schema.boolean.optional(),
+          bathrooms: schema.boolean.optional(),
+          parking: schema.boolean.optional(),
+          medicalService: schema.boolean.optional(),
+          diningRoom: schema.boolean.optional(),
+          socialNetworks: schema.string.optional(),
+          googleMapLink: schema.string.optional(),
+          deleted: schema.boolean.optional(),
+        }),
+      })
+
       const [total, data] = await prisma.$transaction([
         prisma.sites.count(),
         prisma.sites.findMany({
-          take: 10,
-          skip: 0,
-          select: {
-            id: true,
-            name: true,
-            typeId: true,
-            type: true,
-            typeSite: true,
-            pedagogicalObjective: true,
-            activities: true,
-            direction: true,
-            parroquiaId: true,
-            phone: true,
-            email: true,
-            active: true,
-            biosecurity: true,
-            bathrooms: true,
-            parking: true,
-            medicalService: true,
-            diningRoom: true,
-            socialNetworks: true,
-            googleMapLink: true,
-            createBy: true,
-            updatedBy: true,
-            version: true,
-            manager: true,
-          },
+          ...pagination,
+          where: filters,
         }),
       ])
 

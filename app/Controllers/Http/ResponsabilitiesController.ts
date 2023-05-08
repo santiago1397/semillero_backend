@@ -1,26 +1,30 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { prisma } from '@ioc:Adonis/Addons/Prisma'
 import { Responsabilities } from '@prisma/client'
-import { enumErrors, enumSuccess } from '../../Utils/utils'
-
+import { IPagination, enumErrors, enumSuccess, mapToPagination } from '../../Utils/utils'
+import { schema } from '@ioc:Adonis/Core/Validator'
 export default class ResponsabilitiesController {
-  public async index({}: HttpContextContract) {
+  public async index({ request }: HttpContextContract) {
     try {
+      // Pagination
+      const pagination = request.qs()
+        ? mapToPagination(request.qs() as IPagination)
+        : ({} as IPagination)
+
+      // Filters
+      const filters = await request.validate({
+        schema: schema.create({
+          name: schema.string.optional(),
+          description: schema.string.optional(),
+          deleted: schema.boolean.optional(),
+        }),
+      })
+
       const [total, data] = await prisma.$transaction([
         prisma.responsabilities.count(),
         prisma.responsabilities.findMany({
-          take: 10,
-          skip: 0,
-          select: {
-            id: true,
-            name: true,
-            description: true,
-            deleted: true,
-            createBy: true,
-            updatedBy: true,
-            version: true,
-            responsibles: true,
-          },
+          ...pagination,
+          where: filters,
         }),
       ])
 

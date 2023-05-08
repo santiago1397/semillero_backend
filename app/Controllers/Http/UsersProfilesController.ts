@@ -6,22 +6,26 @@ import { schema } from '@ioc:Adonis/Core/Validator'
 export default class UsersProfilesController {
   public async index({ request }: HttpContextContract) {
     try {
-        // Pagination
-        const pagination = request.qs()
+      // Pagination
+      const pagination = request.qs()
         ? mapToPagination(request.qs() as IPagination)
         : ({} as IPagination)
 
       // Filters
       const filters = await request.validate({
         schema: schema.create({
-          name: schema.string.optional(),
+          userId: schema.number.optional(),
+          firstName: schema.string.optional(),
+          lastName: schema.string.optional(),
+          identity: schema.string.optional(),
+          phone: schema.string.optional(),
           deleted: schema.boolean.optional(),
         }),
       })
 
       const [total, data] = await prisma.$transaction([
-        prisma.activities.count(),
-        prisma.activities.findMany({
+        prisma.usersProfiles.count(),
+        prisma.usersProfiles.findMany({
           ...pagination,
           where: filters,
         }),
