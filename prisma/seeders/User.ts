@@ -31,6 +31,12 @@ export default class UserSeeder extends PrismaSeederBase {
             phone: '******************',
           },
         },
+        userRole: {
+          create: {
+            roleId: 3,
+            enteId: 3,
+          },
+        },
       },
       {
         email: 'admin@mppct.gob.ve',
