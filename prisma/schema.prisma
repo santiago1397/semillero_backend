@@ -113,6 +113,7 @@ model ResponsiblesEntes {
   birthDate         String
   email             String
   phone             String
+  deleted           Boolean        @default(false)
   assignedBy        Int              @default(0)
 }
 
@@ -158,6 +159,7 @@ model Sites {
   diningRoom           Boolean        @default(false)
   socialNetworks       String?
   googleMapLink        String?
+  deleted              Boolean        @default(false)
   createBy             Int            @default(0)
   updatedBy            Int?
   version              Int            @default(0)
