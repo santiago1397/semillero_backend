@@ -79,6 +79,8 @@ model Entes {
   name            String              @unique
   acronim         String?
   deleted         Boolean             @default(false)
+  estadoId        Int                 @default(0)
+  estado          Estados @relation(fields: [estadoId], references: [id], onUpdate: Cascade, onDelete: NoAction)
   createdBy       Int                 @default(0)
   updatedBy       Int?
   version         Int                 @default(0)
@@ -120,6 +122,7 @@ model ResponsiblesEntes {
 model Estados {
   id         Int          @id @default(autoincrement())
   nombre     String       @unique
+  entes      Entes[]
   municipios Municipios[]
 }
 
@@ -205,7 +208,7 @@ model Schools {
   municipioId   Int?
   parroquiaId   Int?
   direction     String?
-  phone         String
+  phone         String?
   totalStudents Int              @default(0)
   count         Int              @default(0)
   createBy      Int              @default(0)

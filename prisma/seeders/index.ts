@@ -8,6 +8,7 @@ export default [
   'TypesSite',
   'Activity',
   'Profession',
+  'Estados',
   'Ente',
   'ResponsabilitiesEnte',
   'Role',
