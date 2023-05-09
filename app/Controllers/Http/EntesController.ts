@@ -6,11 +6,6 @@ import { schema } from '@ioc:Adonis/Core/Validator'
 export default class EntesController {
   public async index({ request }: HttpContextContract) {
     try {
-      // Pagination
-      const pagination = request.qs()
-        ? mapToPagination(request.qs() as IPagination)
-        : ({} as IPagination)
-
       // Filters
       const filters = await request.validate({
         schema: schema.create({
@@ -23,7 +18,6 @@ export default class EntesController {
       const [total, data] = await prisma.$transaction([
         prisma.entes.count(),
         prisma.entes.findMany({
-          ...pagination,
           where: filters,
         }),
       ])

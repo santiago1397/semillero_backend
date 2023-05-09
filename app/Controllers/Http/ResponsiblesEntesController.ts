@@ -61,7 +61,7 @@ export default class ResponsiblesEntesController {
 
       const [data] = await prisma.$transaction([
         prisma.responsiblesEntes.findMany({
-          where: { id: Number(id) },
+          where: { enteId: Number(id) },
           select: {
             id: true,
             ente: true,
