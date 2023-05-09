@@ -1,11 +1,11 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { prisma } from '@ioc:Adonis/Addons/Prisma'
-import { Users } from '@prisma/client'
 import { enumErrors, enumSuccess } from '../../Utils/utils'
 import Hash from '@ioc:Adonis/Core/Hash'
+import { schema } from '@ioc:Adonis/Core/Validator'
 
 export default class UsersController {
-  public async index({}: HttpContextContract) {
+  public async index({ }: HttpContextContract) {
     try {
       const [total, data] = await prisma.$transaction([
         prisma.users.count(),
@@ -46,38 +46,47 @@ export default class UsersController {
 
       return { total, data }
     }
- catch (error) {
+    catch (error) {
       console.log(error)
       return { message: enumErrors.DEFAULT }
     }
   }
 
   public async store({ request }: HttpContextContract) {
-    const password = await Hash.make(request.body().password);
     try {
-      const data = request.body().map(e => (
-        {
-          email: e.email,
-          password: password,
-          profile: {
-            create: {
-              firstName: e.firstName,
-              lastName: e.lastName,
-              identity: e.identity
-            }
-          },
-          userRole: {
-            create: {
-              roleId: e.role,
-              enteId: e.ente
-            }
+      // Validations
+      const payload = await request.validate({
+        schema: schema.create({
+          email: schema.string(),
+          password: schema.string(),
+          firstName: schema.string(),
+          lastName: schema.string(),
+          identity: schema.string(),
+          role: schema.number(),
+          ente: schema.number()
+        }),
+      });
+      
+      // Hash password
+      const password = await Hash.make(payload.password);
+
+      await prisma.users.create({ data : {
+        email: payload.email,
+        password: password,
+        profile: {
+          create: {
+            firstName: payload.firstName,
+            lastName: payload.lastName,
+            identity: payload.identity
+          }
+        },
+        userRole: {
+          create: {
+            roleId: payload.role,
+            enteId: payload.ente
           }
         }
-      ));
-
-      console.log('Password', password);
-      console.log('Data', data)
-      await prisma.users.create({ data })
+      }});
       return { message: enumSuccess.CREATE }
     } catch (err) {
       console.log(err)

@@ -1,7 +1,8 @@
 import { prisma } from '@ioc:Adonis/Addons/Prisma'
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { schema, rules } from '@ioc:Adonis/Core/Validator'
-import { enumSuccess } from 'App/Utils/utils'
+import { enumErrors, enumSuccess } from 'App/Utils/utils'
+import Hash from '@ioc:Adonis/Core/Hash'
 
 export default class AuthController {
   public async login({ request, auth }: HttpContextContract) {
@@ -60,18 +61,46 @@ export default class AuthController {
     }
   }
 
-  public async register({ request, auth }: HttpContextContract) {
-    const email = request.input('email')
-    const password = request.input('password')
-    const user = await User.create({
-      email: email,
-      password: password,
-    })
+  public async register({ request }: HttpContextContract) {
+    try {
+      // Validations
+      const payload = await request.validate({
+        schema: schema.create({
+          email: schema.string(),
+          password: schema.string(),
+          firstName: schema.string(),
+          lastName: schema.string(),
+          identity: schema.string(),
+          role: schema.number(),
+          ente: schema.number()
+        }),
+      });
+      
+      // Hash password
+      const password = await Hash.make(payload.password);
 
-    const token = await auth.use('api').login(user, {
-      expiresIn: '10 days',
-    })
-    return token.toJSON()
+      await prisma.users.create({ data : {
+        email: payload.email,
+        password: password,
+        profile: {
+          create: {
+            firstName: payload.firstName,
+            lastName: payload.lastName,
+            identity: payload.identity
+          }
+        },
+        userRole: {
+          create: {
+            roleId: payload.role,
+            enteId: payload.ente
+          }
+        }
+      }});
+      return { message: enumSuccess.CREATE }
+    } catch (err) {
+      console.log(err)
+      return { message: enumErrors.ERROR_CREATE }
+    }
   }
 
   public async recoverPassword({ request, auth }: HttpContextContract) {
