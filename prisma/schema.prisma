@@ -79,7 +79,7 @@ model Entes {
   name            String              @unique
   acronim         String?
   deleted         Boolean             @default(false)
-  estadoId        Int                 @default(0)
+  estadoId        Int                 @default(1)
   estado          Estados @relation(fields: [estadoId], references: [id], onUpdate: Cascade, onDelete: NoAction)
   createdBy       Int                 @default(0)
   updatedBy       Int?
@@ -321,6 +321,10 @@ model RoutesPlanned {
   activityId  Int
   activity    Activities @relation(fields: [activityId], references: [id])
   datePlanned DateTime   @default(now())
+  responsibleIdentity    String
+  responsibleFirstName   String
+  responsibleLastName    String
+  responsiblePhone       String
   createBy    Int        @default(0)
   updatedBy   Int?
   version     Int        @default(0)

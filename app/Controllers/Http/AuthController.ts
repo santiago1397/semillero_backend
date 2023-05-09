@@ -45,6 +45,12 @@ export default class AuthController {
             ente: {
               select: {
                 name: true,
+                estadoId: true,
+                estado: {
+                  select: {
+                    nombre: true
+                  }
+                }
               },
             },
           },
