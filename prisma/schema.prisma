@@ -123,6 +123,7 @@ model Estados {
   id         Int          @id @default(autoincrement())
   nombre     String       @unique
   entes      Entes[]
+  sitios     Sites[]
   municipios Municipios[]
 }
 
@@ -131,6 +132,7 @@ model Municipios {
   nombre     String
   estadoId   Int
   estado     Estados      @relation(fields: [estadoId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  sitios     Sites[]
   parroquias Parroquias[]
 }
 
@@ -139,6 +141,7 @@ model Parroquias {
   nombre      String
   municipioId Int
   municipios  Municipios @relation(fields: [municipioId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  sitios     Sites[]
 }
 
 // Sitios
@@ -151,7 +154,12 @@ model Sites {
   pedagogicalObjective String?
   activities           String?
   direction            String?
+  estadoId             Int
+  estado               Estados      @relation(fields: [estadoId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  municipioId          Int
+  municipio            Municipios   @relation(fields: [municipioId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   parroquiaId          Int
+  parroquia            Parroquias   @relation(fields: [parroquiaId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   phone                String
   email                String?
   active               Boolean        @default(false)

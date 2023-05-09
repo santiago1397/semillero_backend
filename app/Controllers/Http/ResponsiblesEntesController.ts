@@ -3,6 +3,7 @@ import { prisma } from '@ioc:Adonis/Addons/Prisma'
 import { ResponsiblesEntes } from '@prisma/client'
 import { IPagination, enumErrors, enumSuccess, mapToPagination } from '../../Utils/utils'
 import { schema } from '@ioc:Adonis/Core/Validator'
+
 export default class ResponsiblesEntesController {
   public async index({ request }: HttpContextContract) {
     try {
@@ -30,7 +31,7 @@ export default class ResponsiblesEntesController {
       })
 
       const [total, data] = await prisma.$transaction([
-        prisma.responsiblesEntes.count(),
+        prisma.responsiblesEntes.count({ where : filters}),
         prisma.responsiblesEntes.findMany({
           ...pagination,
           where: filters,
