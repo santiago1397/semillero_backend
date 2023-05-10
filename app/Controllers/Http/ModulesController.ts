@@ -22,7 +22,7 @@ export default class ModulesController {
       })
 
       const [total, data] = await prisma.$transaction([
-        prisma.modules.count(),
+        prisma.modules.count({ where: filters }),
         prisma.modules.findMany({
           ...pagination,
           where: filters,

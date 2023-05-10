@@ -17,7 +17,7 @@ export default class MunicipiosController {
 
       const [total, data] = await prisma.$transaction([
         
-        prisma.municipios.count(),
+        prisma.municipios.count({ where: filters }),
         prisma.municipios.findMany({
           where: filters,
         }),

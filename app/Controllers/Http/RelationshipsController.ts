@@ -20,7 +20,7 @@ export default class RelationshipController {
       })
 
       const [total, data] = await prisma.$transaction([
-        prisma.relationship.count(),
+        prisma.relationship.count({ where: filters }),
         prisma.relationship.findMany({
           ...pagination,
           where: filters,

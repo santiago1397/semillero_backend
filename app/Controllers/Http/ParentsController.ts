@@ -28,7 +28,7 @@ export default class ParentsController {
       })
 
       const [total, data] = await prisma.$transaction([
-        prisma.parents.count(),
+        prisma.parents.count({ where: filters }),
         prisma.parents.findMany({
           ...pagination,
           where: filters,

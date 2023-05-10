@@ -34,7 +34,7 @@ export default class StudentsController {
       })
 
       const [total, data] = await prisma.$transaction([
-        prisma.students.count(),
+        prisma.students.count({ where: filters }),
         prisma.students.findMany({
           ...pagination,
           where: filters,

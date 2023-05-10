@@ -24,7 +24,7 @@ export default class UsersProfilesController {
       })
 
       const [total, data] = await prisma.$transaction([
-        prisma.usersProfiles.count(),
+        prisma.usersProfiles.count({ where: filters }),
         prisma.usersProfiles.findMany({
           ...pagination,
           where: filters,

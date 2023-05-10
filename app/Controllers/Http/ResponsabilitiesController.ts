@@ -21,7 +21,7 @@ export default class ResponsabilitiesController {
       })
 
       const [total, data] = await prisma.$transaction([
-        prisma.responsabilities.count(),
+        prisma.responsabilities.count({ where: filters }),
         prisma.responsabilities.findMany({
           ...pagination,
           where: filters,

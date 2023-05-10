@@ -20,7 +20,7 @@ export default class ProfessionsController {
       })
 
       const [total, data] = await prisma.$transaction([
-        prisma.professions.count(),
+        prisma.professions.count({ where: filters }),
         prisma.professions.findMany({
           ...pagination,
           where: filters,

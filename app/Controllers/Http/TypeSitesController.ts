@@ -20,7 +20,7 @@ export default class TypeSitesController {
       })
 
       const [total, data] = await prisma.$transaction([
-        prisma.typeSites.count(),
+        prisma.typeSites.count({ where: filters }),
         prisma.typeSites.findMany({
           ...pagination,
           where: filters,

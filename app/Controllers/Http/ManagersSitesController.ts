@@ -29,7 +29,7 @@ export default class ManagersSitesController {
       })
 
       const [total, data] = await prisma.$transaction([
-        prisma.managersSites.count(),
+        prisma.managersSites.count({ where: filters }),
         prisma.managersSites.findMany({
           ...pagination,
           where: filters,

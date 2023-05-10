@@ -38,7 +38,7 @@ export default class SitesController {
       })
 
       const [total, data] = await prisma.$transaction([
-        prisma.sites.count(),
+        prisma.sites.count({ where: filters }),
         prisma.sites.findMany({
           select: {
             id : true,

@@ -24,7 +24,7 @@ export default class RoutesPlannedController {
       })
 
       const [total, data] = await prisma.$transaction([
-        prisma.routesPlanned.count(),
+        prisma.routesPlanned.count({ where: filters }),
         prisma.routesPlanned.findMany({
           ...pagination,
           where: filters,

@@ -1,7 +1,7 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { prisma } from '@ioc:Adonis/Addons/Prisma'
 import { Entes } from '@prisma/client'
-import { IPagination ,enumErrors, enumSuccess, mapToPagination } from '../../Utils/utils'
+import { enumErrors, enumSuccess } from '../../Utils/utils'
 import { schema } from '@ioc:Adonis/Core/Validator'
 export default class EntesController {
   public async index({ request }: HttpContextContract) {
@@ -16,7 +16,7 @@ export default class EntesController {
       })
 
       const [total, data] = await prisma.$transaction([
-        prisma.entes.count(),
+        prisma.entes.count({ where: filters }),
         prisma.entes.findMany({
           where: filters,
         }),

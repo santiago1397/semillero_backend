@@ -16,7 +16,7 @@ export default class ParroquiasController {
       })
 
       const [total, data] = await prisma.$transaction([
-        prisma.parroquias.count(),
+        prisma.parroquias.count({ where: filters }),
         prisma.parroquias.findMany({
           where: filters,
         }),

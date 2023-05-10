@@ -15,7 +15,7 @@ export default class EstadosController {
       })
 
       const [total, data] = await prisma.$transaction([
-        prisma.estados.count(),
+        prisma.estados.count({ where: filters }),
         prisma.estados.findMany({
           where: filters,
         }),

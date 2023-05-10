@@ -21,7 +21,7 @@ export default class RolesController {
       })
 
       const [total, data] = await prisma.$transaction([
-        prisma.roles.count(),
+        prisma.roles.count({ where: filters }),
         prisma.roles.findMany({
           ...pagination,
           where: filters,
