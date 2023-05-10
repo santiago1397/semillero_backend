@@ -3,6 +3,7 @@ import { prisma } from '@ioc:Adonis/Addons/Prisma'
 import { IPagination, enumErrors, enumSuccess, mapToPagination } from '../../Utils/utils'
 import Hash from '@ioc:Adonis/Core/Hash'
 import { schema } from '@ioc:Adonis/Core/Validator'
+import { Prisma } from '@prisma/client'
 
 export default class UsersController {
   public async index({ request }: HttpContextContract) {
@@ -13,52 +14,32 @@ export default class UsersController {
         : ({} as IPagination)
 
       // Filters
-      const filters = await request.validate({
+      let filters = await request.validate({
         schema: schema.create({
           name: schema.string.optional(),
           deleted: schema.boolean.optional(),
+          enteId: schema.number.optional()
         }),
       })
-
-      console.log('Pagination', pagination);
-
+      if(filters.enteId ) { Object.assign(filters, { userRole: { some: { enteId: filters.enteId }}}); } 
+      delete filters.enteId;
+      
       const [total, data] = await prisma.$transaction([
         prisma.users.count({ where: filters }),
         prisma.users.findMany({
           ...pagination,
-          select: {
-            id: true,
-            email: true,
-            createdBy: true,
-            updatedBy: true,
-            version: true,
-            profile: {
-              select: {
-                firstName: true,
-                lastName: true,
-              },
-            },
+          where: filters,
+          include: { 
+            profile: true,
             userRole: {
-              select: {
-                roleId: true,
-                role: {
-                  select: {
-                    name: true,
-                  },
-                },
-                enteId: true,
-                ente: {
-                  select: {
-                    name: true,
-                  },
-                },
-              },
-            },
+              include: {
+                role: true,
+                ente: true
+              }
+            }, 
           },
-          where: filters
         }),
       ])
-
       return { total, data }
     }
     catch (error) {
