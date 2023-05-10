@@ -3,7 +3,6 @@ import { prisma } from '@ioc:Adonis/Addons/Prisma'
 import { IPagination, enumErrors, enumSuccess, mapToPagination } from '../../Utils/utils'
 import Hash from '@ioc:Adonis/Core/Hash'
 import { schema } from '@ioc:Adonis/Core/Validator'
-import { Prisma } from '@prisma/client'
 
 export default class UsersController {
   public async index({ request }: HttpContextContract) {
