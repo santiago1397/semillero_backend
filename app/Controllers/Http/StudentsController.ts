@@ -69,8 +69,7 @@ export default class StudentsController {
           localPhone: schema.string(),
         }),
       })
-      skipDuplicates: true
-      await prisma.students.createMany({ data:  payload  })
+      await prisma.students.createMany({ data: payload, skipDuplicates: true })
       return { message: enumSuccess.CREATE }
     } catch (err) {
       console.log(err)
