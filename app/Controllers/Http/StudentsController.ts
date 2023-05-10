@@ -49,9 +49,28 @@ export default class StudentsController {
   }
 
   public async store({ request }: HttpContextContract) {
-    const data = request.body() as Students
     try {
-      await prisma.students.create({ data: { ...data } })
+      const payload = await request.validate({
+        schema: schema.create({
+          firstName: schema.string(),
+          lastName: schema.string(),
+          codPlantel: schema.string(),
+          identity: schema.string(),
+          birthDate: schema.string(),
+          gender: schema.number(),
+          gradeId: schema.number(),
+          sizeShirt: schema.string(),
+          disability: schema.string(),
+          direction: schema.string(),
+          estadoId: schema.number(),
+          municipioId: schema.number(),
+          parroquiaId: schema.number(),
+          phone: schema.string(),
+          localPhone: schema.string(),
+        }),
+      })
+      skipDuplicates: true
+      await prisma.students.createMany({ data:  payload  })
       return { message: enumSuccess.CREATE }
     } catch (err) {
       console.log(err)
