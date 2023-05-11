@@ -20,22 +20,22 @@ export default class UsersController {
           enteId: schema.number.optional()
         }),
       })
-      if(filters.enteId ) { Object.assign(filters, { userRole: { some: { enteId: filters.enteId }}}); } 
+      if (filters.enteId) { Object.assign(filters, { userRole: { some: { enteId: filters.enteId } } }); }
       delete filters.enteId;
-      
+
       const [total, data] = await prisma.$transaction([
         prisma.users.count({ where: filters }),
         prisma.users.findMany({
           ...pagination,
           where: filters,
-          include: { 
+          include: {
             profile: true,
             userRole: {
               include: {
                 role: true,
                 ente: true
               }
-            }, 
+            },
           },
         }),
       ])
@@ -97,28 +97,13 @@ export default class UsersController {
       const [data] = await prisma.$transaction([
         prisma.users.findMany({
           where: { id: Number(id) },
-          select: {
-            id: true,
-            email: true,
-            createdBy: true,
-            updatedBy: true,
-            version: true,
-            profile: {
-              select: {
-                firstName: true,
-                lastName: true,
-              },
-            },
+          include: {
+            profile: true,
             userRole: {
-              select: {
-                roleId: true,
-                role: {
-                  select: {
-                    name: true,
-                  },
-                },
-                enteId: true,
-              },
+              include: {
+                role: true,
+                ente: true
+              }
             },
           },
         }),
@@ -133,11 +118,61 @@ export default class UsersController {
   public async update({ request, params }: HttpContextContract) {
     try {
       const { id } = params
-      const data = request.body()
-      await prisma.users.update({
+
+      // Validations
+      const payload = await request.validate({
+        schema: schema.create({
+          email: schema.string(),
+          password: schema.string.optional(),
+          firstName: schema.string(),
+          lastName: schema.string(),
+          identity: schema.string(),
+          role: schema.number(),
+          ente: schema.number()
+        }),
+      });
+      
+      let data = {
+        email: payload.email,
+        // profile: {
+        //   update: {
+        //     where: { userId: Number(id) },
+        //     data: {
+        //       firstName: payload.firstName,
+        //       lastName: payload.lastName,
+        //       identity: payload.identity
+        //     }
+        //   }
+        // },
+        userRole: {
+          update: {
+            data: {
+              enteId: payload.ente,
+              roleId: payload.role
+            },
+            where: {
+              userId_roleId_enteId:  { userId: Number(id), roleId: payload.role, enteId: payload.ente}
+            }
+          }
+        }
+      }
+
+      // Hash password
+      var password = '';
+      if (payload.password) {
+        password = await Hash.make(payload.password);
+        Object.assign(data, { password: password });
+      }
+
+      console.log('data', data);
+
+      const register = await prisma.users.update({
         where: { id: Number(id) },
-        data: data,
+        data: data
       })
+
+      console.log('registed', register);
+
       return { message: enumSuccess.UPDATE }
     } catch (error) {
       console.log(error)

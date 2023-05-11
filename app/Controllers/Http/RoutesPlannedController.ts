@@ -31,6 +31,11 @@ export default class RoutesPlannedController {
         prisma.routesPlanned.count({ where: filters }),
         prisma.routesPlanned.findMany({
           ...pagination,
+          include: {
+            activity: true,
+            plantel: true,
+            site: true
+          },
           where: filters,
         }),
       ])
@@ -45,16 +50,34 @@ export default class RoutesPlannedController {
   public async store({ request }: HttpContextContract) {
     try {
       let uploaded = await File.upload(request);
-      const data = request.body() as RoutesPlanned
-      if(!uploaded.status) return { message: enumErrors.FILE_NOT_UPLOADED }
+
+      // Payload
+      const payload = await request.validate({
+        schema: schema.create({
+          name: schema.string(),
+          siteId: schema.number(),
+          codPlantel: schema.string(),
+          activityId: schema.number(),
+          enteId: schema.number(),
+          datePlanned: schema.string(),
+          responsibleIdentity: schema.string(),
+          responsibleFirstName: schema.string(),
+          responsibleLastName: schema.string(),
+          responsiblePhone: schema.string(),
+          responsibleCargo: schema.string()
+        }),
+      });
+
+      if (!uploaded.status) return { message: enumErrors.FILE_NOT_UPLOADED }
       const mappedData: Prisma.StudentsCreateManyInput[] = await MapExcel.map(uploaded.filename);
+
       await prisma.$transaction([
-        prisma.students.createMany({data: mappedData, skipDuplicates: true }),
-        prisma.routesPlanned.create({ data: data })
+        prisma.students.createMany({ data: mappedData, skipDuplicates: true }),
+        prisma.routesPlanned.create({ data: payload })
       ]);
       return { message: enumSuccess.CREATE }
     } catch (err) {
-      console.log(err)
+      console.log(err.message)
       return { message: enumErrors.ERROR_CREATE }
     }
   }
@@ -113,5 +136,19 @@ export default class RoutesPlannedController {
       console.log(error)
       return { message: enumErrors.ERROR_DELETE }
     }
+  }
+
+  public async report({ request, response }: HttpContextContract){
+    // Filters
+    const filters = await request.validate({
+      schema: schema.create({
+        enteId: schema.number.optional(),
+        startData: schema.string.optional(),
+        endDate: schema.number.optional(),
+      }),
+    })
+
+    MapExcel.export(filters);
+    File.download(response);
   }
 }
