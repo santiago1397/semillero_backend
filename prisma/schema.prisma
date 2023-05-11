@@ -327,6 +327,7 @@ model RoutesPlanned {
   responsibleFirstName   String
   responsibleLastName    String
   responsiblePhone       String
+  deleted     Boolean @default(false)
   createBy    Int        @default(0)
   updatedBy   Int?
   version     Int        @default(0)
