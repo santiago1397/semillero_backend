@@ -124,7 +124,7 @@ export default class AuthController {
           .from('cbastidas@mppct.gob.ve')
           .to(email)
           .subject('Recuperacion de contraseña')
-          .htmlView('resources/views/password_recovery', {
+          .htmlView('/var/www/html/semillero_backend/resources/views/password_recovery.edge', {
             user: { fullname: user.profile?.firstName },
             url: `localhost:3333/reset-password/${token.tokenHash}`,
           })

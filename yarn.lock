@@ -295,7 +295,6 @@
     tmp-cache "^1.1.0"
     validator "^13.7.0"
 
-<<<<<<< HEAD
 "@adonisjs/view@^6.2.0":
   version "6.2.0"
   resolved "https://registry.yarnpkg.com/@adonisjs/view/-/view-6.2.0.tgz#be62987e0565f8e80c264f78e4fde0472442012d"
@@ -305,8 +304,6 @@
     edge-supercharged "^3.1.1"
     edge.js "^5.5.0"
 
-=======
->>>>>>> 71800c01dd43bd0872ce5d91926eaff815174c93
 "@apidevtools/json-schema-ref-parser@^9.0.6":
   version "9.1.2"
   resolved "https://registry.yarnpkg.com/@apidevtools/json-schema-ref-parser/-/json-schema-ref-parser-9.1.2.tgz#8ff5386b365d4c9faa7c8b566ff16a46a577d9b8"

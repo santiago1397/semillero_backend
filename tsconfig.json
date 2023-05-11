@@ -32,7 +32,8 @@
       "@adonisjs/lucid",
       "@wahyubucil/adonis-prisma",
       "@adonisjs/auth",
-      "@adonisjs/mail"
+      "@adonisjs/mail",
+      "@adonisjs/view"
     ]
   }
 }
