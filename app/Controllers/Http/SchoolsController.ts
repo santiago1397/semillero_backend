@@ -60,24 +60,9 @@ export default class SchoolsController {
       const [data] = await prisma.$transaction([
         prisma.schools.findMany({
           where: { id: Number(id) },
-          select: {
-            id: true,
-            codPlantel: true,
-            name: true,
-            type: true,
-            estadoId: true,
-            municipioId: true,
-            parroquiaId: true,
-            direction: true,
-            phone: true,
-            totalStudents: true,
-            count: true,
-            createBy: true,
-            updatedBy: true,
-            version: true,
-            routes: true,
-            manager: true,
-          },
+          include: {
+            manager: true
+          }
         }),
       ])
       return { data }

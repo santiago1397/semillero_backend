@@ -86,6 +86,7 @@ model Entes {
   version         Int                 @default(0)
   userRole        UsersRoles[]
   responsibleEnte ResponsiblesEntes[]
+  routes    RoutesPlanned[]
 }
 
 // Responsabilidades por cada miembro de los entes
@@ -185,6 +186,7 @@ model TypeSites {
   updatedBy Int?
   version   Int     @default(0)
   sites     Sites[]
+  routes    RoutesPlanned[]
 }
 
 // Administradores de los Sitios
@@ -318,15 +320,19 @@ model RoutesPlanned {
   id          Int        @id @default(autoincrement())
   name        String     @unique
   siteId      Int
+  site        TypeSites  @relation(fields: [siteId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   codPlantel  String
   plantel     Schools    @relation(fields: [codPlantel], references: [codPlantel])
   activityId  Int
   activity    Activities @relation(fields: [activityId], references: [id])
-  datePlanned DateTime   @default(now())
+  enteId      Int
+  ente        Entes @relation(fields: [enteId], references: [id])
+  datePlanned String
   responsibleIdentity    String
   responsibleFirstName   String
   responsibleLastName    String
   responsiblePhone       String
+  responsibleCargo       String
   deleted     Boolean @default(false)
   createBy    Int        @default(0)
   updatedBy   Int?

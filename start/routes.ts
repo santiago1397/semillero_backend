@@ -53,6 +53,7 @@ Route.group(() => {
   Route.resource('students', 'StudentsController').apiOnly()
   Route.resource('type-sites', 'TypeSitesController').apiOnly()
   Route.resource('users-profiles', 'UsersProfilesController').apiOnly()
+  Route.get('generate-report', 'RoutesPlannedController.report')
 })
   .prefix('api')
   .middleware(['auth'])
