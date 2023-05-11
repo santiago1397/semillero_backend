@@ -245,25 +245,6 @@ model ManagersSchools {
   codPlantel  String              @unique
 }
 
-// Representantes
-model Parents {
-  id              Int                 @id @default(autoincrement())
-  firstName       String
-  lastName        String
-  identity        String?
-  birthDate       String
-  relationshipId  Int
-  relationship    Relationship        @relation(fields: [relationshipId], references: [id], onUpdate: Cascade, onDelete: NoAction)
-  phone           String
-  localPhone      String?
-  email           String
-  professionId    Int
-  profession      Professions         @relation(fields: [professionId], references: [id], onUpdate: Cascade, onDelete: NoAction)
-  createBy        Int                 @default(0)
-  updatedBy       Int?
-  version         Int                 @default(0)
-}
-
 // Parentescos
 model Relationship {
   id        Int       @id @default(autoincrement())
@@ -271,7 +252,6 @@ model Relationship {
   createBy  Int       @default(0)
   updatedBy Int?
   version   Int       @default(0)
-  parents   Parents[]
 }
 
 // Profesiones
@@ -281,7 +261,6 @@ model Professions {
   createBy  Int       @default(0)
   updatedBy Int?
   version   Int       @default(0)
-  parent    Parents[]
   responsiblesEntes ResponsiblesEntes[] 
 }
 
@@ -289,20 +268,35 @@ model Professions {
 model Students {
   id          Int     @id @default(autoincrement())
   codPlantel  String
-  firstName   String
-  lastName    String
+  firstName   String?
+  lastName    String?
   identity    String?
-  birthDate   String
-  gender      Int     @default(0) // 0 = Femenimo, 1 = Masculino	
-  gradeId     Int
-  sizeShirt   String
-  disability  String  @default("NO")
-  direction   String
-  estadoId    Int
-  municipioId Int
-  parroquiaId Int
-  phone       String
+  birthDate   String?
+  age         String?
+  gender      String?
+  grade       String?
+  sizeShirt   String?
+  disability  String?  @default("NO")
+  alergie     String?  @default("NO")
+  typeBlood   String?  
+  vaccinatedCovid String?
+  direction   String?
+  estado      String?
+  municipio   String?
+  parroquia   String?
   localPhone  String?
+  phone       String?
+  firstNameResponsible       String?
+  lastNameResponsible        String?
+  identityResponsible        String?
+  ageResponsible             String?
+  relationshipResponsible    String?
+  phoneResponsible           String?
+  localPhoneResponsible      String?
+  emailResponsible           String?
+  professionResponsible      String?
+  directionjobResponsible    String?
+  agreeParticipes            String?
   createBy    Int     @default(0)
   updatedBy   Int?
   version     Int     @default(0)

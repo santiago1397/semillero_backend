@@ -4,6 +4,7 @@ export const enumErrors = {
   ERROR_SELECT: 'Error al consultar el registro',
   ERROR_UPDATE: 'Error al actualizar el registro',
   ERROR_DELETE: 'Error al eliminar el registro',
+  FILE_NOT_UPLOADED: 'Error al cargar el archivo de datos'
 }
 
 export const enumSuccess = {

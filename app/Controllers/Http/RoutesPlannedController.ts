@@ -1,8 +1,12 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { prisma } from '@ioc:Adonis/Addons/Prisma'
+import { Prisma } from '@prisma/client'
 import { RoutesPlanned } from '@prisma/client'
 import { IPagination, enumErrors, enumSuccess, mapToPagination } from '../../Utils/utils'
 import { schema } from '@ioc:Adonis/Core/Validator'
+import File from 'App/Services/File'
+import MapExcel from 'App/Services/MapExcel'
+
 export default class RoutesPlannedController {
   public async index({ request }: HttpContextContract) {
     try {
@@ -39,9 +43,15 @@ export default class RoutesPlannedController {
   }
 
   public async store({ request }: HttpContextContract) {
-    const data = request.body() as RoutesPlanned
     try {
-      await prisma.routesPlanned.create({ data: { ...data } })
+      let uploaded = await File.upload(request);
+      const data = request.body() as RoutesPlanned
+      if(!uploaded.status) return { message: enumErrors.FILE_NOT_UPLOADED }
+      const mappedData: Prisma.StudentsCreateManyInput[] = await MapExcel.map(uploaded.filename);
+      await prisma.$transaction([
+        prisma.students.createMany({data: mappedData, skipDuplicates: true }),
+        prisma.routesPlanned.create({ data: data })
+      ]);
       return { message: enumSuccess.CREATE }
     } catch (err) {
       console.log(err)
