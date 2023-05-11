@@ -3,7 +3,7 @@ import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { schema, rules } from '@ioc:Adonis/Core/Validator'
 import { enumErrors, enumSuccess } from 'App/Utils/utils'
 import Hash from '@ioc:Adonis/Core/Hash'
-
+import Mail from '@ioc:Adonis/Addons/Mail'
 export default class AuthController {
   public async login({ request, auth }: HttpContextContract) {
     const payload = await request.validate({
@@ -45,12 +45,7 @@ export default class AuthController {
             ente: {
               select: {
                 name: true,
-                estado: {
-                  select: {
-                    id: true,
-                    nombre: true
-                  }
-                }
+                
               },
             },
           },
@@ -111,7 +106,12 @@ export default class AuthController {
 
   public async recoverPassword({ request, auth }: HttpContextContract) {
     const email = request.input('email')
-    const user = await User.findByOrFail('email', email)
+    const user = await prisma.users.findFirstOrThrow({ 
+      where: { email: email },
+      include: { 
+        profile: true,
+      },
+    })
 
     if (user) {
       const token = await auth.use('api').generate(user, {
@@ -119,8 +119,19 @@ export default class AuthController {
       })
 
       console.log('token:', token)
+      let mailer = await Mail.preview((message) => {
+        message
+          .from('cbastidas@mppct.gob.ve')
+          .to(email)
+          .subject('Recuperacion de contraseña')
+          .htmlView('resources/views/password_recovery', {
+            user: { fullname: user.profile?.firstName },
+            url: `localhost:3333/reset-password/${token.tokenHash}`,
+          })
+      })
 
-      let mailer = await new Mailer(
+      console.log(mailer)
+      /* let mailer = await new Mailer(
         user,
         'Recuperación de acceso Sistema Correspondencia',
         true,
@@ -131,7 +142,7 @@ export default class AuthController {
         },
         '',
         []
-      ).preview()
+      ).preview() */
       return mailer
     } else {
       return { message: 'El correo que has ingresado es incorrecto o no está registrado' }

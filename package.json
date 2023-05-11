@@ -61,6 +61,7 @@
     "@adonisjs/lucid": "^18.3.0",
     "@adonisjs/mail": "^8.2.0",
     "@adonisjs/repl": "^3.1.0",
+    "@adonisjs/view": "^6.2.0",
     "@prisma/client": "^4.14.0",
     "@types/node": "^18.16.3",
     "@wahyubucil/adonis-prisma": "^0.4.0",
