@@ -12,6 +12,7 @@ export const enumSuccess = {
   UPDATE: 'Se ha actualizado el registro exitosamente',
   DELETE: 'Se ha eliminado el registro exitosamente',
   LOGOUT: 'Ha cerrado sesion exitosamente',
+  UPDATEPASSWORD: 'La contraseña ha sido actualiza exitosamente'
 }
 
 export interface IPagination {
