@@ -25,7 +25,7 @@ class File {
   }
 
   static async download(response) {
-    return response.download(`${Application.tmpPath('storage/')}reporte.xlsx`);
+    return response.attachment(`${Application.tmpPath('storage/')}reporte.xlsx`);
   }
 }
 

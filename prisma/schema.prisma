@@ -326,7 +326,7 @@ model RoutesPlanned {
   activityId  Int
   activity    Activities @relation(fields: [activityId], references: [id])
   enteId      Int
-  ente        Entes @relation(fields: [enteId], references: [id])
+  ente        Entes      @relation(fields: [enteId], references: [id])
   datePlanned String
   responsibleIdentity    String
   responsibleFirstName   String

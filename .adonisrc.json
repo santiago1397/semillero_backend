@@ -50,5 +50,8 @@
       "pattern": "resources/views/**/*.edge",
       "reloadServer": false
     }
-  ]
+  ],
+  "directories": {
+    "public": "./tmp/storage"
+  }
 }

@@ -1,6 +1,8 @@
 import Excel from 'exceljs';
 import Application from '@ioc:Adonis/Core/Application';
 import { prisma } from '@ioc:Adonis/Addons/Prisma'
+import { Prisma } from '@prisma/client'
+
 
 class MapExcel {
   static async map(file) {
@@ -54,7 +56,6 @@ class MapExcel {
     let workbook = new Excel.Workbook();
     let worksheet = workbook.addWorksheet("Hoja1");
     let font = { name: 'Times New Roman', size: 12 };
-
     worksheet.columns = [
       { header: "No", key: "id", width: 10, style: { font: font } },
       { header: "Nombre", key: "name", width: 40, style: { font: font } },
@@ -63,7 +64,13 @@ class MapExcel {
     ];
 
     let data = await prisma.routesPlanned.findMany({
-      where: filters
+      where: filters,
+      include: {
+        activity: true,
+        site: true,
+        plantel: true,
+        ente: true
+      }
     })
 
     let rowSekolah = data.map(async item => {

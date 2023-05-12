@@ -1,11 +1,10 @@
-import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { prisma } from '@ioc:Adonis/Addons/Prisma'
-import { Prisma } from '@prisma/client'
-import { RoutesPlanned } from '@prisma/client'
-import { IPagination, enumErrors, enumSuccess, mapToPagination } from '../../Utils/utils'
+import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { schema } from '@ioc:Adonis/Core/Validator'
+import { Prisma } from '@prisma/client'
 import File from 'App/Services/File'
 import MapExcel from 'App/Services/MapExcel'
+import { IPagination, enumErrors, enumSuccess, mapToPagination } from '../../Utils/utils'
 
 export default class RoutesPlannedController {
   public async index({ request }: HttpContextContract) {
@@ -33,8 +32,9 @@ export default class RoutesPlannedController {
           ...pagination,
           include: {
             activity: true,
+            site: true,
             plantel: true,
-            site: true
+            ente: true
           },
           where: filters,
         }),
@@ -144,11 +144,20 @@ export default class RoutesPlannedController {
       schema: schema.create({
         enteId: schema.number.optional(),
         startData: schema.string.optional(),
-        endDate: schema.number.optional(),
+        endDate: schema.string.optional(),
       }),
     })
 
-    MapExcel.export(filters);
+    let f = {};
+    if(filters.startData && filters.endDate){
+      Object.assign(f, { datePlanned: { lte: filters.endDate, gte: filters.startData }})
+    }
+
+    if(filters.enteId){
+      Object.assign(f, { enteId : filters.enteId });
+    }
+
+    MapExcel.export(f);
     File.download(response);
   }
 }
