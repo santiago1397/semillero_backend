@@ -4,7 +4,7 @@ import Application from '@ioc:Adonis/Core/Application'
 
 export default class Mailer extends BaseMailer {
   constructor (
-    private user: Array<string>,
+    private email: string,
     private title: string,
     private hasInterface?: boolean,
     private type?: string,
@@ -19,7 +19,7 @@ export default class Mailer extends BaseMailer {
     message
     .subject(this.title)
     .from(Env.get('SMTP_USERNAME'))
-    .to(this.user.email)
+    .to(this.email)
     
     if(this.hasInterface){
       switch(this.type){
@@ -36,7 +36,7 @@ export default class Mailer extends BaseMailer {
 
     if(this.hasAttached){
       for(let i = 0; i < this.hasAttached.length; i++){
-        message.attach(Application.tmpPath(`storage/${this.location}/${this.hasAttached[i]}`))
+        message.attach(Application.tmpPath(`${this.location}/${this.hasAttached[i]}`))
       }
     }
   }

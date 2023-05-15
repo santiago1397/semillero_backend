@@ -161,10 +161,10 @@ export default class RoutesPlannedController {
 
     MapExcel.export(f);
     const files = [
-      "1_arc_tgc.pdf"
+      "reporte.xlsx"
     ];
 
-    let mailer = await new Mailer(filters.email, 'Reporte Semilleros Cientificos', true, 'test', { user: { fullname: 'Eloy Gonzalez'}, url: 'https://your-app.com/verification-url' }, 'storage/', files).send();
+    let mailer = await new Mailer(filters.email, 'Reporte Semilleros Cientificos', true, 'test', { user: { fullname: 'Eloy Gonzalez'}, url: 'https://your-app.com/verification-url' }, 'storage/', files).preview();
     return mailer;
     // File.download(response);
   }
