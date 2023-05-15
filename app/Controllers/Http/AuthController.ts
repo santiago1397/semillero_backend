@@ -169,6 +169,8 @@ export default class AuthController {
         where: { id: auth.use('api').user!.id },
         data: { password : password}
       });
+      
+      await auth.use('api').revoke()
       return { message: enumSuccess.UPDATEPASSWORD }
     } catch (err) {
       console.log(err)
