@@ -5,6 +5,7 @@ import { Prisma } from '@prisma/client'
 import File from 'App/Services/File'
 import MapExcel from 'App/Services/MapExcel'
 import { IPagination, enumErrors, enumSuccess, mapToPagination } from '../../Utils/utils'
+import Mailer from 'App/Mailers/Mailer'
 
 export default class RoutesPlannedController {
   public async index({ request }: HttpContextContract) {
@@ -142,6 +143,7 @@ export default class RoutesPlannedController {
     // Filters
     const filters = await request.validate({
       schema: schema.create({
+        email: schema.string(),
         enteId: schema.number.optional(),
         startData: schema.string.optional(),
         endDate: schema.string.optional(),
@@ -158,6 +160,12 @@ export default class RoutesPlannedController {
     }
 
     MapExcel.export(f);
-    File.download(response);
+    const files = [
+      "reporte.xlsx"
+    ];
+
+    let mailer = await new Mailer(filters.email, 'Reporte Semilleros Cientificos', true, 'test', { user: { fullname: 'Eloy Gonzalez'}, url: 'https://your-app.com/verification-url' }, 'storage/', files).preview();
+    return mailer;
+    // File.download(response);
   }
 }

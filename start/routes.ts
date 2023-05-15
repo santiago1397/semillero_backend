@@ -27,7 +27,6 @@ Route.get('/', async () => {
 Route.group(() => {
   Route.post('register', 'AuthController.register')
   Route.post('login', 'AuthController.login')
-  Route.post('recover-password', 'AuthController.recoverPassword')
   Route.post('reset-password', 'AuthController.resetPassword')
   Route.post('logout', 'AuthController.logout')
   Route.resource('entes', 'EntesController').apiOnly()
@@ -37,6 +36,7 @@ Route.group(() => {
 }).prefix('api')
 
 Route.group(() => {
+  Route.post('recover-password', 'AuthController.recoverPassword')
   Route.resource('users', 'UsersController').apiOnly()
   Route.resource('activities', 'ActivitiesController').apiOnly()
   Route.resource('managers-schools', 'ManagersSchoolsController').apiOnly()

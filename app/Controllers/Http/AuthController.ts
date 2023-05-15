@@ -4,6 +4,8 @@ import { schema, rules } from '@ioc:Adonis/Core/Validator'
 import { enumErrors, enumSuccess } from 'App/Utils/utils'
 import Hash from '@ioc:Adonis/Core/Hash'
 import Mail from '@ioc:Adonis/Addons/Mail'
+import Env from '@ioc:Adonis/Core/Env'
+
 export default class AuthController {
   public async login({ request, auth }: HttpContextContract) {
     const payload = await request.validate({
@@ -121,12 +123,12 @@ export default class AuthController {
       console.log('token:', token)
       let mailer = await Mail.preview((message) => {
         message
-          .from('cbastidas@mppct.gob.ve')
+          .from(Env.get('SMTP_USERNAME'))
           .to(email)
           .subject('Recuperacion de contraseña')
           .htmlView('/var/www/html/semillero_backend/resources/views/password_recovery.edge', {
             user: { fullname: user.profile?.firstName },
-            url: `localhost:3333/reset-password/${token.tokenHash}`,
+            url: `${Env.get('DNS')}/resetear/${token.tokenHash}`,
           })
       })
 
@@ -163,19 +165,14 @@ export default class AuthController {
       // Hash password
       const password = await Hash.make(payload.password);
 
-      await prisma.users.create({
-        data: {
-          id: payload.id,
-          email: payload.email,
-          password: password
-        }
+      await prisma.users.update({
+        where: { id: payload.id },
+        data: { password : password}
       });
-      return { message: enumSuccess.CREATE }
+      return { message: enumSuccess.UPDATEPASSWORD }
     } catch (err) {
       console.log(err)
       return { message: enumErrors.ERROR_CREATE }
     }
   }
-
-  //public async resetPassword({ }: HttpContextContract) {}
 }
