@@ -151,13 +151,13 @@ export default class AuthController {
     }
   }
 
-  public async resetPassword({ request }: HttpContextContract) {
+  public async resetPassword({ auth, request }: HttpContextContract) {
     try {
+      await auth.use('api').authenticate()
+
       // Validations
       const payload = await request.validate({
         schema: schema.create({
-          id: schema.number(),
-          email: schema.string(),
           password: schema.string()
         }),
       });
@@ -166,7 +166,7 @@ export default class AuthController {
       const password = await Hash.make(payload.password);
 
       await prisma.users.update({
-        where: { id: payload.id },
+        where: { id: auth.use('api').user!.id },
         data: { password : password}
       });
       return { message: enumSuccess.UPDATEPASSWORD }
