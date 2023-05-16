@@ -131,29 +131,24 @@ export default class UsersController {
           ente: schema.number()
         }),
       });
-      
+
       let data = {
         email: payload.email,
-        // profile: {
-        //   update: {
-        //     where: { userId: Number(id) },
-        //     data: {
-        //       firstName: payload.firstName,
-        //       lastName: payload.lastName,
-        //       identity: payload.identity
-        //     }
-        //   }
-        // },
-        userRole: {
+        profile: {
           update: {
-            data: {
-              enteId: payload.ente,
-              roleId: payload.role
-            },
-            where: {
-              userId_roleId_enteId:  { userId: Number(id), roleId: payload.role, enteId: payload.ente}
-            }
+            firstName: payload.firstName,
+            lastName: payload.lastName,
+            identity: payload.identity,
           }
+        },
+        userRole: {
+          connectOrCreate: {
+            where: { userId_roleId_enteId: { userId: Number(id), roleId: payload.role, enteId: payload.ente } },
+            create: {
+              roleId: payload.role,
+              enteId: payload.ente
+            }
+          },
         }
       }
 
@@ -164,14 +159,14 @@ export default class UsersController {
         Object.assign(data, { password: password });
       }
 
-      console.log('data', data);
-
-      const register = await prisma.users.update({
+      await prisma.users.update({
         where: { id: Number(id) },
-        data: data
+        data: data,
+        include: {
+          userRole: true,
+          profile: true
+        }
       })
-
-      console.log('registed', register);
 
       return { message: enumSuccess.UPDATE }
     } catch (error) {
