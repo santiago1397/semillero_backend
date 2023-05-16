@@ -142,13 +142,18 @@ export default class UsersController {
           }
         },
         userRole: {
-          connectOrCreate: {
-            where: { userId_roleId_enteId: { userId: Number(id), roleId: payload.role, enteId: payload.ente } },
-            create: {
-              roleId: payload.role,
-              enteId: payload.ente
-            }
-          },
+          update: {
+            enteId: payload.ente,
+            roleId: payload.role
+          }
+          // To update data in relations Many to Many use this example code
+          // connectOrCreate: {
+          //   where: { userId_roleId_enteId: { userId: Number(id), roleId: payload.role, enteId: payload.ente } },
+          //   create: {
+          //     roleId: payload.role,
+          //     enteId: payload.ente
+          //   }
+          // },
         }
       }
 
