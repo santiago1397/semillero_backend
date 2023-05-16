@@ -8,7 +8,7 @@ import { IPagination, enumErrors, enumSuccess, mapToPagination } from '../../Uti
 import Mailer from 'App/Mailers/Mailer'
 
 export default class RoutesPlannedController {
-  public async index({ request }: HttpContextContract) {
+  public async index({ request, response }: HttpContextContract) {
     try {
       // Pagination
       const pagination = request.qs()
@@ -20,6 +20,7 @@ export default class RoutesPlannedController {
         schema: schema.create({
           name: schema.string.optional(),
           siteId: schema.number.optional(),
+          enteId: schema.number.optional(),
           codPlantel: schema.string.optional(),
           activityId: schema.number.optional(),
           datePlanned: schema.string.optional(),
@@ -44,11 +45,11 @@ export default class RoutesPlannedController {
       return { total, data }
     } catch (error) {
       console.log(error)
-      return { message: enumErrors.DEFAULT }
+      return response.status(500).json({ message: enumErrors.DEFAULT })
     }
   }
 
-  public async store({ request }: HttpContextContract) {
+  public async store({ request, response }: HttpContextContract) {
     try {
       let uploaded = await File.upload(request);
 
@@ -79,39 +80,32 @@ export default class RoutesPlannedController {
       return { message: enumSuccess.CREATE }
     } catch (err) {
       console.log(err.message)
-      return { message: enumErrors.ERROR_CREATE }
+      return response.status(500).json({ message: enumErrors.ERROR_CREATE })
     }
   }
 
-  public async show({ params }: HttpContextContract) {
+  public async show({ params, response }: HttpContextContract) {
     try {
       const { id } = params
       const [data] = await prisma.$transaction([
         prisma.routesPlanned.findMany({
           where: { id: Number(id) },
-          select: {
-            id: true,
-            name: true,
-            siteId: true,
-            codPlantel: true,
-            plantel: true,
-            activityId: true,
+          include: {
             activity: true,
-            datePlanned: true,
-            createBy: true,
-            updatedBy: true,
-            version: true,
-          },
+            ente: true,
+            plantel: true,
+            site: true
+          }
         }),
       ])
       return { data }
     } catch (error) {
       console.log(error)
-      return { message: enumErrors.ERROR_SELECT }
+      return response.status(500).json({ message: enumErrors.ERROR_SELECT })
     }
   }
 
-  public async update({ request, params }: HttpContextContract) {
+  public async update({ request, params, response }: HttpContextContract) {
     try {
       const { id } = params
       const data = request.body()
@@ -122,11 +116,11 @@ export default class RoutesPlannedController {
       return { message: enumSuccess.UPDATE }
     } catch (error) {
       console.log(error)
-      return { message: enumErrors.ERROR_UPDATE }
+      return response.status(500).json({ message: enumErrors.ERROR_UPDATE })
     }
   }
 
-  public async destroy({ params }: HttpContextContract) {
+  public async destroy({ params, response }: HttpContextContract) {
     try {
       const { id } = params
       await prisma.routesPlanned.delete({
@@ -135,37 +129,42 @@ export default class RoutesPlannedController {
       return { message: enumSuccess.DELETE }
     } catch (error) {
       console.log(error)
-      return { message: enumErrors.ERROR_DELETE }
+      return response.status(500).json({ message: enumErrors.ERROR_DELETE })
     }
   }
 
-  public async report({ request, response }: HttpContextContract){
-    // Filters
-    const filters = await request.validate({
-      schema: schema.create({
-        email: schema.string(),
-        enteId: schema.number.optional(),
-        startData: schema.string.optional(),
-        endDate: schema.string.optional(),
-      }),
-    })
-
-    let f = {};
-    if(filters.startData && filters.endDate){
-      Object.assign(f, { datePlanned: { lte: filters.endDate, gte: filters.startData }})
+  public async report({ auth, request, response }: HttpContextContract){
+    try {
+      await auth.use('api').authenticate()
+      // Filters
+      const filters = await request.validate({
+        schema: schema.create({
+          enteId: schema.number.optional(),
+          startData: schema.string.optional(),
+          endDate: schema.string.optional(),
+        }),
+      })
+  
+      let f = {};
+      if(filters.startData && filters.endDate){
+        Object.assign(f, { datePlanned: { lte: filters.endDate, gte: filters.startData }})
+      }
+  
+      if(filters.enteId){
+        Object.assign(f, { enteId : filters.enteId });
+      }
+  
+      MapExcel.export(f);
+      const files = [
+        "reporte.xlsx"
+      ];
+  
+      let mail = await new Mailer(auth.use('api').user!.email, 'Reporte Semilleros Cientificos', true, 'test', { user: { fullname: 'Eloy Gonzalez'}, url: 'https://your-app.com/verification-url' }, 'storage/', files).send();
+      console.log('Mail Report', mail);
+      return { message: enumSuccess.REPORTSENDED };
+    } catch(error) {
+      console.log(error)
+      return response.status(500).json({ message: enumErrors.REPORTERROR })
     }
-
-    if(filters.enteId){
-      Object.assign(f, { enteId : filters.enteId });
-    }
-
-    MapExcel.export(f);
-    const files = [
-      "reporte.xlsx"
-    ];
-
-    let mailer = await new Mailer(filters.email, 'Reporte Semilleros Cientificos', true, 'test', { user: { fullname: 'Eloy Gonzalez'}, url: 'https://your-app.com/verification-url' }, 'storage/', files).preview();
-    return mailer;
-    // File.download(response);
   }
 }

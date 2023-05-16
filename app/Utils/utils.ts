@@ -4,7 +4,9 @@ export const enumErrors = {
   ERROR_SELECT: 'Error al consultar el registro',
   ERROR_UPDATE: 'Error al actualizar el registro',
   ERROR_DELETE: 'Error al eliminar el registro',
-  FILE_NOT_UPLOADED: 'Error al cargar el archivo de datos'
+  FILE_NOT_UPLOADED: 'Error al cargar el archivo de datos',
+  REPORTERROR: 'Error al generar el reporte o envio de correo',
+  LOGIN: 'Credenciales incorrectas',
 }
 
 export const enumSuccess = {
@@ -12,7 +14,8 @@ export const enumSuccess = {
   UPDATE: 'Se ha actualizado el registro exitosamente',
   DELETE: 'Se ha eliminado el registro exitosamente',
   LOGOUT: 'Ha cerrado sesion exitosamente',
-  UPDATEPASSWORD: 'La contraseña ha sido actualiza exitosamente'
+  UPDATEPASSWORD: 'La contraseña ha sido actualiza exitosamente',
+  REPORTSENDED: 'Reporte generado exitosamente y enviado a su correo electronico'
 }
 
 export interface IPagination {

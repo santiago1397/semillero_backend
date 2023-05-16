@@ -1,10 +1,9 @@
-import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { prisma } from '@ioc:Adonis/Addons/Prisma'
-import { Students } from '@prisma/client'
-import { IPagination, enumErrors, enumSuccess, mapToPagination } from '../../Utils/utils'
+import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { schema } from '@ioc:Adonis/Core/Validator'
+import { IPagination, enumErrors, enumSuccess, mapToPagination } from '../../Utils/utils'
 export default class StudentsController {
-  public async index({ request }: HttpContextContract) {
+  public async index({ request, response }: HttpContextContract) {
     try {
       // Pagination
       const pagination = request.qs()
@@ -19,14 +18,13 @@ export default class StudentsController {
           lastName: schema.string.optional(),
           identity: schema.string.optional(),
           birthDate: schema.string.optional(),
-          gender: schema.number.optional(),
-          gradeId: schema.number.optional(),
+          gender: schema.string.optional(),
           sizeShirt: schema.string.optional(),
           disability: schema.string.optional(),
           direction: schema.string.optional(),
-          estadoId: schema.number.optional(),
-          municipioId: schema.number.optional(),
-          parroquiaId: schema.number.optional(),
+          estadoId: schema.string.optional(),
+          municipioId: schema.string.optional(),
+          parroquiaId: schema.string.optional(),
           phone: schema.string.optional(),
           localPhone: schema.string.optional(),
           deleted: schema.boolean.optional(),
@@ -44,11 +42,11 @@ export default class StudentsController {
       return { total, data }
     } catch (error) {
       console.log(error)
-      return { message: enumErrors.DEFAULT }
+      return response.status(500).json({ message: enumErrors.DEFAULT })
     }
   }
 
-  public async store({ request }: HttpContextContract) {
+  public async store({ request, response }: HttpContextContract) {
     try {
       const payload = await request.validate({
         schema: schema.create({
@@ -57,14 +55,13 @@ export default class StudentsController {
           codPlantel: schema.string(),
           identity: schema.string(),
           birthDate: schema.string(),
-          gender: schema.number(),
-          gradeId: schema.number(),
+          gender: schema.string(),
           sizeShirt: schema.string(),
           disability: schema.string(),
           direction: schema.string(),
-          estadoId: schema.number(),
-          municipioId: schema.number(),
-          parroquiaId: schema.number(),
+          estadoId: schema.string(),
+          municipioId: schema.string(),
+          parroquiaId: schema.string(),
           phone: schema.string(),
           localPhone: schema.string(),
         }),
@@ -73,11 +70,11 @@ export default class StudentsController {
       return { message: enumSuccess.CREATE }
     } catch (err) {
       console.log(err)
-      return { message: enumErrors.ERROR_CREATE }
+      return response.status(500).json({ message: enumErrors.ERROR_CREATE })
     }
   }
 
-  public async show({ params }: HttpContextContract) {
+  public async show({ params, response }: HttpContextContract) {
     try {
       const { id } = params
       const [data] = await prisma.$transaction([
@@ -91,13 +88,12 @@ export default class StudentsController {
             identity: true,
             birthDate: true,
             gender: true,
-            gradeId: true,
             sizeShirt: true,
             disability: true,
             direction: true,
-            estadoId: true,
-            municipioId: true,
-            parroquiaId: true,
+            estado: true,
+            municipio: true,
+            parroquia: true,
             phone: true,
             localPhone: true,
             createBy: true,
@@ -109,11 +105,11 @@ export default class StudentsController {
       return { data }
     } catch (error) {
       console.log(error)
-      return { message: enumErrors.ERROR_SELECT }
+      return response.status(500).json({ message: enumErrors.ERROR_SELECT })
     }
   }
 
-  public async update({ request, params }: HttpContextContract) {
+  public async update({ request, params, response }: HttpContextContract) {
     try {
       const { id } = params
       const data = request.body()
@@ -124,11 +120,11 @@ export default class StudentsController {
       return { message: enumSuccess.UPDATE }
     } catch (error) {
       console.log(error)
-      return { message: enumErrors.ERROR_UPDATE }
+      return response.status(500).json({ message: enumErrors.ERROR_UPDATE })
     }
   }
 
-  public async destroy({ params }: HttpContextContract) {
+  public async destroy({ params, response }: HttpContextContract) {
     try {
       const { id } = params
       await prisma.students.delete({
@@ -137,7 +133,7 @@ export default class StudentsController {
       return { message: enumSuccess.DELETE }
     } catch (error) {
       console.log(error)
-      return { message: enumErrors.ERROR_DELETE }
+      return response.status(500).json({ message: enumErrors.ERROR_DELETE })
     }
   }
 }

@@ -7,54 +7,42 @@ import Mail from '@ioc:Adonis/Addons/Mail'
 import Env from '@ioc:Adonis/Core/Env'
 
 export default class AuthController {
-  public async login({ request, auth }: HttpContextContract) {
-    const payload = await request.validate({
-      schema: schema.create({
-        email: schema.string({}, [rules.email()]),
-        password: schema.string(),
-      }),
-      messages: {
-        required: 'El {{ field }} es requerido para iniciar sesion',
-      },
-    })
-    const token = await auth.use('api').attempt(payload.email, payload.password, {
-      expiresIn: '1 day',
-    })
-
-    const user = await prisma.users.findMany({
-      where: { email: payload.email },
-      select: {
-        id: true,
-        email: true,
-        createdBy: true,
-        updatedBy: true,
-        version: true,
-        profile: {
-          select: {
-            firstName: true,
-            lastName: true,
+  public async login({ request, auth, response }: HttpContextContract) {
+    try {
+      const payload = await request.validate({
+        schema: schema.create({
+          email: schema.string({}, [rules.email()]),
+          password: schema.string(),
+        }),
+        messages: {
+          required: 'El {{ field }} es requerido para iniciar sesion',
+        },
+      })
+      const token = await auth.use('api').attempt(payload.email, payload.password, {
+        expiresIn: '1 day',
+      })
+  
+      const user = await prisma.users.findMany({
+        where: { email: payload.email },
+        include: {
+          profile: true,
+          userRole: {
+            include: {
+              role: true,
+              ente: {
+                include: {
+                  estado: true
+                }
+              }
+            }
           },
         },
-        userRole: {
-          select: {
-            roleId: true,
-            role: {
-              select: {
-                name: true,
-              },
-            },
-            enteId: true,
-            ente: {
-              select: {
-                name: true,
-                
-              },
-            },
-          },
-        },
-      },
-    })
-    return { token: token, data: user }
+      })
+      return { token: token, data: user }
+    } catch (error){
+      console.log(error);
+      response.unauthorized({ message: enumErrors.LOGIN });
+    }
   }
 
   public async logout({ auth }: HttpContextContract) {
@@ -121,37 +109,24 @@ export default class AuthController {
       })
 
       console.log('token:', token)
-      let mailer = await Mail.preview((message) => {
+      let mailer = await Mail.send((message) => {
         message
           .from(Env.get('SMTP_USERNAME'))
           .to(email)
           .subject('Recuperacion de contraseña')
           .htmlView('/var/www/html/semillero_backend/resources/views/password_recovery.edge', {
             user: { fullname: user.profile?.firstName },
-            url: `${Env.get('DNS')}/resetear/${token.tokenHash}`,
+            url: `${Env.get('DNS')}/resetear/${token.token}`,
           })
       })
 
-      console.log(mailer)
-      /* let mailer = await new Mailer(
-        user,
-        'Recuperación de acceso Sistema Correspondencia',
-        true,
-        'recover',
-        {
-          user: { fullname: user.username },
-          url: `localhost:3333/reset-password/${token.tokenHash}`,
-        },
-        '',
-        []
-      ).preview() */
       return mailer
     } else {
       return { message: 'El correo que has ingresado es incorrecto o no está registrado' }
     }
   }
 
-  public async resetPassword({ auth, request }: HttpContextContract) {
+  public async resetPassword({ auth, request, response }: HttpContextContract) {
     try {
       await auth.use('api').authenticate()
 
@@ -161,7 +136,6 @@ export default class AuthController {
           password: schema.string()
         }),
       });
-
       // Hash password
       const password = await Hash.make(payload.password);
 
@@ -174,7 +148,7 @@ export default class AuthController {
       return { message: enumSuccess.UPDATEPASSWORD }
     } catch (err) {
       console.log(err)
-      return { message: enumErrors.ERROR_CREATE }
+      return response.status(500).json({ message: enumErrors.ERROR_CREATE });
     }
   }
 }

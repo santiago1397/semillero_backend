@@ -71,6 +71,7 @@ model UsersRoles {
   assignedBy Int   @default(0)
 
   @@unique([userId, roleId, enteId])
+  @@unique([roleId, enteId])
 }
 
 // Entes
