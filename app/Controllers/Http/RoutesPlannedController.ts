@@ -34,8 +34,8 @@ export default class RoutesPlannedController {
           ...pagination,
           include: {
             activity: true,
-            site: true,
-            plantel: true,
+            //site: true,
+            //plantel: true,
             ente: true
           },
           where: filters,
@@ -52,31 +52,54 @@ export default class RoutesPlannedController {
   public async store({ request, response }: HttpContextContract) {
     try {
       let uploaded = await File.upload(request);
-
+      console.log(uploaded)
+      console.log(request)
       // Payload
+      /* const payload = await request.validate({
+        schema: schema.create({
+          name: schema.string(),
+          activityId: schema.string(),
+          enteId: schema.string(),
+          datePlanned: schema.string(),
+
+        }),
+      });  */
+
       const payload = await request.validate({
         schema: schema.create({
           name: schema.string(),
-          siteId: schema.number(),
-          codPlantel: schema.string(),
           activityId: schema.number(),
           enteId: schema.number(),
           datePlanned: schema.string(),
+          /* siteId: schema.number(),
+          codPlantel: schema.string(),
           responsibleIdentity: schema.string(),
           responsibleFirstName: schema.string(),
           responsibleLastName: schema.string(),
           responsiblePhone: schema.string(),
-          responsibleCargo: schema.string()
+          responsibleCargo: schema.string()  */
         }),
       });
 
-      if (!uploaded.status) return { message: enumErrors.FILE_NOT_UPLOADED }
-      const mappedData: Prisma.StudentsCreateManyInput[] = await MapExcel.map(uploaded.filename);
 
-      await prisma.$transaction([
-        prisma.students.createMany({ data: mappedData, skipDuplicates: true }),
-        prisma.routesPlanned.create({ data: payload })
+
+      if (!uploaded.status) return { message: enumErrors.FILE_NOT_UPLOADED }
+      const mappedData : Prisma.StudentsCreateManyInput[]  = await MapExcel.map(uploaded.filename);
+      
+      var lmao = await prisma.$transaction([
+       
+        prisma.routesPlanned.create({ data: payload }) 
       ]);
+
+      console.log(lmao[0].id)
+
+      mappedData.forEach((item)=> item.routesPlannedId  = lmao[0].id)
+      await prisma.$transaction([
+        prisma.students.createMany({ data: mappedData, skipDuplicates: false })
+      ]);
+
+
+
       return { message: enumSuccess.CREATE }
     } catch (err) {
       console.log(err.message)
@@ -93,8 +116,8 @@ export default class RoutesPlannedController {
           include: {
             activity: true,
             ente: true,
-            plantel: true,
-            site: true
+            // plantel: true,
+            // site: true
           }
         }),
       ])
@@ -158,6 +181,8 @@ export default class RoutesPlannedController {
       const files = [
         "reporte.xlsx"
       ];
+
+    
   
       let mail = await new Mailer(auth.use('api').user!.email, 'Reporte Semilleros Cientificos', true, 'test', { user: { fullname: 'Eloy Gonzalez'}, url: 'https://your-app.com/verification-url' }, 'storage/', files).send();
       console.log('Mail Report', mail);

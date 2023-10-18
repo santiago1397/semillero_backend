@@ -12,26 +12,27 @@ datasource db {
 
 // API tokens
 model ApiTokens {
-  id             Int     @id @default(autoincrement())
-  user_id        Int
-  name           String?
-  token          String @unique
-  type           String?
-  createdAt      String? @map("created_at")
-  expiresAt      String? @map("expires_at")
+  id        Int     @id @default(autoincrement())
+  user_id   Int
+  name      String?
+  token     String  @unique
+  type      String?
+  createdAt String? @map("created_at")
+  expiresAt String? @map("expires_at")
+
   @@map("api_tokens")
 }
 
 // Usuarios
 model Users {
-  id              Int                 @id @default(autoincrement())
-  email           String              @unique
+  id              Int            @id @default(autoincrement())
+  email           String         @unique
   password        String
   rememberMeToken String?
-  deleted         Boolean             @default(false)
-  createdBy       Int                 @default(0)
+  deleted         Boolean        @default(false)
+  createdBy       Int            @default(0)
   updatedBy       Int?
-  version         Int                 @default(0)
+  version         Int            @default(0)
   profile         UsersProfiles?
   userRole        UsersRoles?
 }
@@ -69,9 +70,9 @@ model UsersRoles {
   ente       Entes @relation(fields: [enteId], references: [id], onUpdate: Cascade, onDelete: NoAction)
   enteId     Int
   assignedBy Int   @default(0)
+  //@@unique([roleId, enteId])
 
   @@unique([userId, roleId, enteId])
-  @@unique([roleId, enteId])
 }
 
 // Entes
@@ -81,13 +82,13 @@ model Entes {
   acronim         String?
   deleted         Boolean             @default(false)
   estadoId        Int                 @default(1)
-  estado          Estados @relation(fields: [estadoId], references: [id], onUpdate: Cascade, onDelete: NoAction)
+  estado          Estados             @relation(fields: [estadoId], references: [id], onUpdate: Cascade, onDelete: NoAction)
   createdBy       Int                 @default(0)
   updatedBy       Int?
   version         Int                 @default(0)
   userRole        UsersRoles[]
   responsibleEnte ResponsiblesEntes[]
-  routes    RoutesPlanned[]
+  routes          RoutesPlanned[]
 }
 
 // Responsabilidades por cada miembro de los entes
@@ -103,22 +104,22 @@ model Responsabilities {
 }
 
 model ResponsiblesEntes {
-  id                Int              @id @default(autoincrement())
-  ente              Entes            @relation(fields: [enteId], references: [id], onUpdate: Cascade, onDelete: NoAction)
-  enteId            Int
-  responsible       Responsabilities @relation(fields: [responsabilityId], references: [id], onUpdate: Cascade, onDelete: NoAction)
-  responsabilityId  Int
-  profession        Professions @relation(fields: [professionId], references: [id], onUpdate: Cascade, onDelete: NoAction)
-  professionId      Int
-  firstName         String
-  lastName          String
-  identity          String
-  gender            Int
-  birthDate         String
-  email             String
-  phone             String
-  deleted           Boolean        @default(false)
-  assignedBy        Int              @default(0)
+  id               Int              @id @default(autoincrement())
+  ente             Entes            @relation(fields: [enteId], references: [id], onUpdate: Cascade, onDelete: NoAction)
+  enteId           Int
+  responsible      Responsabilities @relation(fields: [responsabilityId], references: [id], onUpdate: Cascade, onDelete: NoAction)
+  responsabilityId Int
+  profession       Professions      @relation(fields: [professionId], references: [id], onUpdate: Cascade, onDelete: NoAction)
+  professionId     Int
+  firstName        String
+  lastName         String
+  identity         String
+  gender           Int
+  birthDate        String
+  email            String
+  phone            String
+  deleted          Boolean          @default(false)
+  assignedBy       Int              @default(0)
 }
 
 model Estados {
@@ -143,7 +144,7 @@ model Parroquias {
   nombre      String
   municipioId Int
   municipios  Municipios @relation(fields: [municipioId], references: [id], onUpdate: Cascade, onDelete: Cascade)
-  sitios     Sites[]
+  sitios      Sites[]
 }
 
 // Sitios
@@ -157,11 +158,11 @@ model Sites {
   activities           String?
   direction            String?
   estadoId             Int
-  estado               Estados      @relation(fields: [estadoId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  estado               Estados        @relation(fields: [estadoId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   municipioId          Int
-  municipio            Municipios   @relation(fields: [municipioId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  municipio            Municipios     @relation(fields: [municipioId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   parroquiaId          Int
-  parroquia            Parroquias   @relation(fields: [parroquiaId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  parroquia            Parroquias     @relation(fields: [parroquiaId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   phone                String
   email                String?
   active               Boolean        @default(false)
@@ -187,7 +188,7 @@ model TypeSites {
   updatedBy Int?
   version   Int     @default(0)
   sites     Sites[]
-  routes    RoutesPlanned[]
+  //routes    RoutesPlanned[]
 }
 
 // Administradores de los Sitios
@@ -225,13 +226,13 @@ model Schools {
   createBy      Int              @default(0)
   updatedBy     Int?
   version       Int              @default(0)
-  routes        RoutesPlanned[]
+  //routes        RoutesPlanned[]
   manager       ManagersSchools?
 }
 
 // Directores
 model ManagersSchools {
-  id          Int                 @id @default(autoincrement())
+  id          Int     @id @default(autoincrement())
   firstName   String
   lastName    String
   identity    String
@@ -241,68 +242,80 @@ model ManagersSchools {
   phone       String
   localPhone  String?
   email       String
-  createBy    Int                 @default(0)
+  createBy    Int     @default(0)
   updatedBy   Int?
-  version     Int                 @default(0)
-  school      Schools             @relation(fields: [codPlantel], references: [codPlantel])
-  codPlantel  String              @unique
+  version     Int     @default(0)
+  school      Schools @relation(fields: [codPlantel], references: [codPlantel])
+  codPlantel  String  @unique
 }
 
 // Parentescos
 model Relationship {
-  id        Int       @id @default(autoincrement())
-  name      String    @unique
-  createBy  Int       @default(0)
+  id        Int    @id @default(autoincrement())
+  name      String @unique
+  createBy  Int    @default(0)
   updatedBy Int?
-  version   Int       @default(0)
+  version   Int    @default(0)
 }
 
 // Profesiones
 model Professions {
-  id        Int       @id @default(autoincrement())
-  name      String    @unique
-  createBy  Int       @default(0)
-  updatedBy Int?
-  version   Int       @default(0)
-  responsiblesEntes ResponsiblesEntes[] 
+  id                Int                 @id @default(autoincrement())
+  name              String              @unique
+  createBy          Int                 @default(0)
+  updatedBy         Int?
+  version           Int                 @default(0)
+  responsiblesEntes ResponsiblesEntes[]
 }
 
 // Estudiantes
 model Students {
-  id          Int     @id @default(autoincrement())
-  codPlantel  String
-  firstName   String?
-  lastName    String?
-  identity    String?
-  birthDate   String?
-  age         String?
-  gender      String?
-  grade       String?
-  sizeShirt   String?
-  disability  String?  @default("NO")
-  alergie     String?  @default("NO")
-  typeBlood   String?  
-  vaccinatedCovid String?
-  direction   String?
-  estado      String?
-  municipio   String?
-  parroquia   String?
-  localPhone  String?
-  phone       String?
-  firstNameResponsible       String?
-  lastNameResponsible        String?
-  identityResponsible        String?
-  ageResponsible             String?
-  relationshipResponsible    String?
-  phoneResponsible           String?
-  localPhoneResponsible      String?
-  emailResponsible           String?
-  professionResponsible      String?
-  directionjobResponsible    String?
-  agreeParticipes            String?
-  createBy    Int     @default(0)
-  updatedBy   Int?
-  version     Int     @default(0)
+  id                      Int           @id @default(autoincrement())
+  codPlantel              String
+  firstName               String?
+  lastName                String?
+  identity                String?
+  age                     String?
+  gender                  String?
+  grade                   String?
+  activityMade            String?
+  activityDate            String?
+  activityPlace           String?
+  entityInCharge          String?
+  InChargeLastName        String?
+  InChargeName            String?
+  InChargeIdentity        String?
+  InChargeCharge          String?
+  InChargePhone           String?
+  InChargeLocalPhone      String?
+  InChargeEmail           String?
+  InChargeProfession      String?
+  sizeShirt               String?
+  disability              String?       @default("NO")
+  intitutionDirection     String?
+  intitutionEstado        String?
+  intitutionMunicipio     String?
+  intitutionParroquia     String?
+  direction               String?
+  estado                  String?
+  municipio               String?
+  parroquia               String?
+  localPhone              String?
+  phone                   String?
+  firstNameResponsible    String?
+  lastNameResponsible     String?
+  identityResponsible     String?
+  ageResponsible          String?
+  relationshipResponsible String?
+  phoneResponsible        String?
+  localPhoneResponsible   String?
+  emailResponsible        String?
+  professionResponsible   String?
+  routesPlannedId         Int
+  routesPlanned           RoutesPlanned @relation(fields: [routesPlannedId], references: [id])
+  createBy                Int           @default(0)
+  updatedBy               Int?
+  version                 Int           @default(0)
 }
 
 // Actividades ludicas
@@ -318,26 +331,27 @@ model Activities {
 
 // Rutas planificadas
 model RoutesPlanned {
-  id          Int        @id @default(autoincrement())
-  name        String     @unique
-  siteId      Int
-  site        TypeSites  @relation(fields: [siteId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  codPlantel  String
-  plantel     Schools    @relation(fields: [codPlantel], references: [codPlantel])
-  activityId  Int
-  activity    Activities @relation(fields: [activityId], references: [id])
-  enteId      Int
-  ente        Entes      @relation(fields: [enteId], references: [id])
-  datePlanned String
-  responsibleIdentity    String
-  responsibleFirstName   String
-  responsibleLastName    String
-  responsiblePhone       String
-  responsibleCargo       String
-  deleted     Boolean @default(false)
-  createBy    Int        @default(0)
-  updatedBy   Int?
-  version     Int        @default(0)
+  id                   Int        @id @default(autoincrement())
+  name                 String     @unique
+  activityId           Int
+  activity             Activities @relation(fields: [activityId], references: [id])
+  enteId               Int
+  ente                 Entes      @relation(fields: [enteId], references: [id])
+  students             Students[]
+  datePlanned          String
+  //siteId               Int
+  //site                 TypeSites  @relation(fields: [siteId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  //codPlantel           String
+  //plantel              Schools    @relation(fields: [codPlantel], references: [codPlantel])
+  //responsibleIdentity  String
+  //responsibleFirstName String
+  //responsibleLastName  String
+  //responsiblePhone     String
+  //responsibleCargo     String
+  deleted              Boolean    @default(false)
+  createBy             Int        @default(0)
+  updatedBy            Int?
+  version              Int        @default(0)
 }
 
 // Modulos del sistema

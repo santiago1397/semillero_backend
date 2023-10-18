@@ -2,7 +2,7 @@ import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { prisma } from '@ioc:Adonis/Addons/Prisma'
 import { ResponsiblesEntes } from '@prisma/client'
 import { IPagination, enumErrors, enumSuccess, mapToPagination } from '../../Utils/utils'
-import { schema } from '@ioc:Adonis/Core/Validator'
+import { schema, rules } from '@ioc:Adonis/Core/Validator'
 
 export default class ResponsiblesEntesController {
   public async index({ request, response }: HttpContextContract) {
@@ -56,13 +56,13 @@ export default class ResponsiblesEntesController {
     }
   }
 
-  public async show({ params, response }: HttpContextContract) {
+  public async show({ request, params, response }: HttpContextContract) {
     try {
       const { id } = params
 
       const [data] = await prisma.$transaction([
         prisma.responsiblesEntes.findMany({
-          where: { enteId: Number(id) },
+          where: { enteId: Number(id), deleted: false },
           select: {
             id: true,
             ente: true,
@@ -82,6 +82,8 @@ export default class ResponsiblesEntesController {
           },
         }),
       ])
+
+      console.log(data)
       return { data }
     } catch (error) {
       console.log(error)

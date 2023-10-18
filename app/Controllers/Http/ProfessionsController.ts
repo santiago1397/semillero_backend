@@ -57,7 +57,6 @@ export default class ProfessionsController {
             createBy: true,
             updatedBy: true,
             version: true,
-            parent: true,
             responsiblesEntes: true,
           },
         }),

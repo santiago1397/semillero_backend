@@ -8,43 +8,53 @@ class MapExcel {
   static async map(file) {
     var workbook = new Excel.Workbook()
     workbook = await workbook.xlsx.readFile(file)
-    let sheet = workbook.getWorksheet('Hoja1');
-    let row = sheet.getColumn('C');
+    let sheet = workbook.getWorksheet('DATA SEMILLEROS ESCUELA');
+    let row = sheet.getColumn('B');
     let data = [] as any;
     row.eachCell(async (cell, rowNumber) => {
-      if (rowNumber >= 2) {
+      if (rowNumber >= 11) {
         data.push(
           {
             codPlantel: sheet.getCell('B' + rowNumber).value,
-            lastName: sheet.getCell('C' + rowNumber).value,
-            firstName: sheet.getCell('D' + rowNumber).value,
+            firstName: sheet.getCell('C' + rowNumber).value,
+            lastName: sheet.getCell('D' + rowNumber).value,
             identity: sheet.getCell('E' + rowNumber).value,
-            birthDate: sheet.getCell('F' + rowNumber).value,
-            age: sheet.getCell('G' + rowNumber).value,
-            gender: sheet.getCell('H' + rowNumber).value,
-            grade: sheet.getCell('I' + rowNumber).value,
-            sizeShirt: sheet.getCell('J' + rowNumber).value,
-            disability: sheet.getCell('K' + rowNumber).value,
-            alergie: sheet.getCell('L' + rowNumber).value,
-            typeBlood: sheet.getCell('M' + rowNumber).value,
-            vaccinatedCovid: sheet.getCell('N' + rowNumber).value,
-            direction: sheet.getCell('O' + rowNumber).value,
-            estado: sheet.getCell('P' + rowNumber).value,
-            municipio: sheet.getCell('Q' + rowNumber).value,
-            parroquia: sheet.getCell('R' + rowNumber).value,
-            localPhone: sheet.getCell('S' + rowNumber).value,
-            phone: sheet.getCell('T' + rowNumber).value,
-            firstNameResponsible: sheet.getCell('U' + rowNumber).value,
-            lastNameResponsible: sheet.getCell('V' + rowNumber).value,
-            identityResponsible: sheet.getCell('W' + rowNumber).value,
-            ageResponsible: sheet.getCell('X' + rowNumber).value,
-            relationshipResponsible: sheet.getCell('Y' + rowNumber).value,
-            phoneResponsible: sheet.getCell('Z' + rowNumber).value,
-            localPhoneResponsible: sheet.getCell('AA' + rowNumber).value,
-            emailResponsible: sheet.getCell('AB' + rowNumber).value,
-            professionResponsible: sheet.getCell('AC' + rowNumber).value,
-            directionjobResponsible: sheet.getCell('AD' + rowNumber).value,
-            agreeParticipes: sheet.getCell('AE' + rowNumber).value,
+            age: sheet.getCell('F' + rowNumber).value,
+            gender: sheet.getCell('G' + rowNumber).value,
+            grade: sheet.getCell('H' + rowNumber).value,
+            activityMade: sheet.getCell('I' + rowNumber).value,
+            /* activityDate: sheet.getCell('J' + rowNumber).value, */
+            activityPlace: sheet.getCell('K' + rowNumber).value,
+            entityInCharge: sheet.getCell('L' + rowNumber).value,
+            InChargeLastName: sheet.getCell('M' + rowNumber).value,
+            InChargeName: sheet.getCell('N' + rowNumber).value,
+            InChargeIdentity: sheet.getCell('O' + rowNumber).value,
+            InChargeCharge: sheet.getCell('P' + rowNumber).value,
+            InChargePhone: sheet.getCell('Q' + rowNumber).value,
+            InChargeLocalPhone: sheet.getCell('R' + rowNumber).value,
+            InChargeEmail: sheet.getCell('S' + rowNumber).value,
+            InChargeProfession: sheet.getCell('T' + rowNumber).value,
+            sizeShirt: sheet.getCell('U' + rowNumber).value,
+            disability: sheet.getCell('V' + rowNumber).value,
+            intitutionDirection: sheet.getCell('W' + rowNumber).value,
+            intitutionEstado: sheet.getCell('X' + rowNumber).value,
+            intitutionMunicipio: sheet.getCell('Y' + rowNumber).value,
+            intitutionParroquia: sheet.getCell('Z' + rowNumber).value,
+            direction: sheet.getCell('AA' + rowNumber).value,
+            estado: sheet.getCell('AB' + rowNumber).value,
+            municipio: sheet.getCell('AC' + rowNumber).value,
+            parroquia: sheet.getCell('AD' + rowNumber).value,
+            localPhone: sheet.getCell('AE' + rowNumber).value,
+            phone: sheet.getCell('AF' + rowNumber).value,
+            firstNameResponsible: sheet.getCell('AG' + rowNumber).value,
+            lastNameResponsible: sheet.getCell('AH' + rowNumber).value,
+            identityResponsible: sheet.getCell('AI' + rowNumber).value,
+            ageResponsible: sheet.getCell('AJ' + rowNumber).value,
+            relationshipResponsible: sheet.getCell('AK' + rowNumber).value,
+            phoneResponsible: sheet.getCell('AL' + rowNumber).value,
+            localPhoneResponsible: sheet.getCell('AM' + rowNumber).value,
+            emailResponsible: sheet.getCell('AN' + rowNumber).value,
+            professionResponsible: sheet.getCell('AO' + rowNumber).value,
           }
         );
       }
@@ -67,8 +77,8 @@ class MapExcel {
       where: filters,
       include: {
         activity: true,
-        site: true,
-        plantel: true,
+        //site: true,
+        //plantel: true,
         ente: true
       }
     })
@@ -78,7 +88,7 @@ class MapExcel {
         id: item.id,
         name: item.name,
         date: item.datePlanned,
-        codPlantel: item.codPlantel
+        //codPlantel: item.codPlantel
       })
     })
 
