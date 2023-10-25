@@ -183,7 +183,13 @@ export default class UsersController {
   public async destroy({ params, response }: HttpContextContract) {
     try {
       const { id } = params
-      await prisma.activities.delete({
+      await prisma.usersRoles.delete({
+        where: { userId: Number(id) },
+      })
+      await prisma.usersProfiles.delete({
+        where: { userId: Number(id) },
+      })
+      await prisma.users.delete({
         where: { id: Number(id) },
       })
       return { message: enumSuccess.DELETE }

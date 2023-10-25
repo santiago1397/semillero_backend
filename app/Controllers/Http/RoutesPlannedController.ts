@@ -10,10 +10,13 @@ import Mailer from 'App/Mailers/Mailer'
 export default class RoutesPlannedController {
   public async index({ request, response }: HttpContextContract) {
     try {
+      /* console.log(request) */
       // Pagination
       const pagination = request.qs()
         ? mapToPagination(request.qs() as IPagination)
         : ({} as IPagination)
+
+      
 
       // Filters
       const filters = await request.validate({
@@ -52,8 +55,8 @@ export default class RoutesPlannedController {
   public async store({ request, response }: HttpContextContract) {
     try {
       let uploaded = await File.upload(request);
-      console.log(uploaded)
-      console.log(request)
+      /* console.log(uploaded)
+      console.log(request) */
       // Payload
       /* const payload = await request.validate({
         schema: schema.create({
@@ -84,16 +87,16 @@ export default class RoutesPlannedController {
 
 
       if (!uploaded.status) return { message: enumErrors.FILE_NOT_UPLOADED }
-      const mappedData : Prisma.StudentsCreateManyInput[]  = await MapExcel.map(uploaded.filename);
-      
+      const mappedData: Prisma.StudentsCreateManyInput[] = await MapExcel.map(uploaded.filename);
+
       var lmao = await prisma.$transaction([
-       
-        prisma.routesPlanned.create({ data: payload }) 
+
+        prisma.routesPlanned.create({ data: payload })
       ]);
 
       console.log(lmao[0].id)
 
-      mappedData.forEach((item)=> item.routesPlannedId  = lmao[0].id)
+      mappedData.forEach((item) => item.routesPlannedId = lmao[0].id)
       await prisma.$transaction([
         prisma.students.createMany({ data: mappedData, skipDuplicates: false })
       ]);
@@ -146,9 +149,15 @@ export default class RoutesPlannedController {
   public async destroy({ params, response }: HttpContextContract) {
     try {
       const { id } = params
+
+      await prisma.students.deleteMany({
+        where: { routesPlannedId: Number(id)},
+      })
+
       await prisma.routesPlanned.delete({
         where: { id: Number(id) },
       })
+
       return { message: enumSuccess.DELETE }
     } catch (error) {
       console.log(error)
@@ -156,7 +165,7 @@ export default class RoutesPlannedController {
     }
   }
 
-  public async report({ auth, request, response }: HttpContextContract){
+  public async report({ auth, request, response }: HttpContextContract) {
     try {
       await auth.use('api').authenticate()
       // Filters
@@ -167,29 +176,41 @@ export default class RoutesPlannedController {
           endDate: schema.string.optional(),
         }),
       })
-  
+
       let f = {};
-      if(filters.startData && filters.endDate){
-        Object.assign(f, { datePlanned: { lte: filters.endDate, gte: filters.startData }})
+      if (filters.startData && filters.endDate) {
+        Object.assign(f, { datePlanned: { lte: filters.endDate, gte: filters.startData } })
       }
-  
-      if(filters.enteId){
-        Object.assign(f, { enteId : filters.enteId });
+
+      if (filters.enteId) {
+        Object.assign(f, { enteId: filters.enteId });
       }
-  
+
       MapExcel.export(f);
       const files = [
         "reporte.xlsx"
       ];
 
-    
-  
-      let mail = await new Mailer(auth.use('api').user!.email, 'Reporte Semilleros Cientificos', true, 'test', { user: { fullname: 'Eloy Gonzalez'}, url: 'https://your-app.com/verification-url' }, 'storage/', files).send();
+
+
+      let mail = await new Mailer(auth.use('api').user!.email, 'Reporte Semilleros Cientificos', true, 'test', { user: { fullname: 'Eloy Gonzalez' }, url: 'https://your-app.com/verification-url' }, 'storage/', files).send();
       console.log('Mail Report', mail);
       return { message: enumSuccess.REPORTSENDED };
-    } catch(error) {
+    } catch (error) {
       console.log(error)
       return response.status(500).json({ message: enumErrors.REPORTERROR })
     }
+  }
+
+  public async download({ request, response, params }: HttpContextContract) {
+    console.log("path download")
+    console.log(request)
+    console.log(params)
+    try {
+      return await File.download(response, request)
+    } catch (error) {
+      return response.status(500).json({ message: enumErrors.REPORTERROR })
+    }
+
   }
 }

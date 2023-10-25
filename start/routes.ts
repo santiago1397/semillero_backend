@@ -34,6 +34,7 @@ Route.group(() => {
   Route.resource('parroquias', 'ParroquiasController').apiOnly()
   Route.post('recover-password', 'AuthController.recoverPassword')
   Route.post('reset-password', 'AuthController.resetPassword')
+  Route.get('download', 'RoutesPlannedController.download')
 }).prefix('api')
 
 Route.group(() => {
@@ -54,6 +55,7 @@ Route.group(() => {
   Route.resource('type-sites', 'TypeSitesController').apiOnly()
   Route.resource('users-profiles', 'UsersProfilesController').apiOnly()
   Route.get('generate-report', 'RoutesPlannedController.report')
+  
 })
   .prefix('api')
   .middleware(['auth'])

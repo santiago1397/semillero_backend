@@ -275,7 +275,7 @@ model Students {
   firstName               String?
   lastName                String?
   identity                String?
-  age                     String?
+  age                     Int?
   gender                  String?
   grade                   String?
   activityMade            String?
@@ -305,7 +305,7 @@ model Students {
   firstNameResponsible    String?
   lastNameResponsible     String?
   identityResponsible     String?
-  ageResponsible          String?
+  ageResponsible          Int?
   relationshipResponsible String?
   phoneResponsible        String?
   localPhoneResponsible   String?
