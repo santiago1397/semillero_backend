@@ -150,8 +150,8 @@ class MapExcel {
           identityResponsible: item['Cédula de Identidad representante']? item['Cédula de Identidad representante'].toString():'',
           ageResponsible: item['Edad Representante']? item['Edad Representante']: null,
           relationshipResponsible: item['Parentesco representante']? item['Parentesco representante']:'',
-          phoneResponsible: item['Teléfono celular representante']? item['Teléfono celular representante']:'',
-          localPhoneResponsible: item['Teléfono laboral o alternativo representante']? item['Teléfono laboral o alternativo representante']: '',
+          phoneResponsible: item['Teléfono celular representante']? item['Teléfono celular representante'].toString():'',
+          localPhoneResponsible: item['Teléfono laboral o alternativo representante']? item['Teléfono laboral o alternativo representante'].toString(): '',
           emailResponsible: item['Email representante']?item['Email representante']:'',
           professionResponsible: item['Profesión y/o oficio representante']? item['Profesión y/o oficio representante']: '',
         }
