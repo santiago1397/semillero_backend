@@ -6,11 +6,16 @@ class File {
     console.log(request) */
     const file = request.file('file', {
       size: '200mb',
-      extnames: ['xls', 'xlsx', 'csv'],
+      extnames: ['xls', 'xlsx', 'csv', 'ods'],
     });
 
     if (!file) {
       return { status: false };
+    }
+
+    console.log(file.errors.length)
+    if (file.errors.length > 0) {
+      return file.errors
     }
 
     if (!file.isValid) {
@@ -23,7 +28,7 @@ class File {
       overwrite: true
     });
     /* console.log(file)  */
-    return { status: true, filename: `${Application.tmpPath('/storage/')}${request.requestBody.name}.${file.extname}` };
+    return { status: true, filename: `${Application.tmpPath('/storage/')}${request.requestBody.name}.${file.extname}`, fileExtension:`.${file.extname}` };
 
 
   }

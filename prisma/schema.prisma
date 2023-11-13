@@ -331,14 +331,17 @@ model Activities {
 
 // Rutas planificadas
 model RoutesPlanned {
-  id                   Int        @id @default(autoincrement())
-  name                 String     @unique
-  activityId           Int
-  activity             Activities @relation(fields: [activityId], references: [id])
-  enteId               Int
-  ente                 Entes      @relation(fields: [enteId], references: [id])
-  students             Students[]
-  datePlanned          String
+  id            Int        @id @default(autoincrement())
+  name          String     @unique
+  activityId    Int
+  activity      Activities @relation(fields: [activityId], references: [id])
+  enteId        Int
+  ente          Entes      @relation(fields: [enteId], references: [id])
+  students      Students[]
+  datePlanned   String
+  observations  String?
+  fileExtension String?
+  check         Boolean?
   //siteId               Int
   //site                 TypeSites  @relation(fields: [siteId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   //codPlantel           String
@@ -348,10 +351,11 @@ model RoutesPlanned {
   //responsibleLastName  String
   //responsiblePhone     String
   //responsibleCargo     String
-  deleted              Boolean    @default(false)
-  createBy             Int        @default(0)
-  updatedBy            Int?
-  version              Int        @default(0)
+  deleted       Boolean    @default(false)
+  createdAt     DateTime   @default(now())
+  createBy      String?
+  updatedBy     Int?
+  version       Int        @default(0)
 }
 
 // Modulos del sistema

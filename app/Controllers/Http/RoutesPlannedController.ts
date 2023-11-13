@@ -6,6 +6,7 @@ import File from 'App/Services/File'
 import MapExcel from 'App/Services/MapExcel'
 import { IPagination, enumErrors, enumSuccess, mapToPagination } from '../../Utils/utils'
 import Mailer from 'App/Mailers/Mailer'
+import { CLIENT_RENEG_LIMIT } from 'tls'
 
 export default class RoutesPlannedController {
   public async index({ request, response }: HttpContextContract) {
@@ -17,6 +18,8 @@ export default class RoutesPlannedController {
         : ({} as IPagination)
 
       
+      
+
 
       // Filters
       const filters = await request.validate({
@@ -30,6 +33,10 @@ export default class RoutesPlannedController {
           deleted: schema.boolean.optional(),
         }),
       })
+
+      if (filters.enteId) {/*  Object.assign(filters, { userRole: { is: { enteId: filters.enteId } } });  */} else{
+        delete filters.enteId;
+      }
 
       const [total, data] = await prisma.$transaction([
         prisma.routesPlanned.count({ where: filters }),
@@ -45,7 +52,9 @@ export default class RoutesPlannedController {
         }),
       ])
 
+      console.log(data)
       return { total, data }
+
     } catch (error) {
       console.log(error)
       return response.status(500).json({ message: enumErrors.DEFAULT })
@@ -68,12 +77,16 @@ export default class RoutesPlannedController {
         }),
       });  */
 
-      const payload = await request.validate({
+
+      var payload = await request.validate({
         schema: schema.create({
           name: schema.string(),
           activityId: schema.number(),
           enteId: schema.number(),
           datePlanned: schema.string(),
+          observations: schema.string(),
+          fileExtension: schema.string(),
+          createBy: schema.number()
           /* siteId: schema.number(),
           codPlantel: schema.string(),
           responsibleIdentity: schema.string(),
@@ -85,16 +98,35 @@ export default class RoutesPlannedController {
       });
 
 
+      
+      if (!uploaded.status) return response.status(500).json({ message: "Error con el archivo invalido" })
 
-      if (!uploaded.status) return { message: enumErrors.FILE_NOT_UPLOADED }
+
       const mappedData: Prisma.StudentsCreateManyInput[] = await MapExcel.map(uploaded.filename);
+
+      payload.fileExtension = uploaded.fileExtension
+
+      const [data] = await prisma.$transaction([
+        prisma.users.findMany({
+          where: { id: Number(payload.createBy) },
+        }),
+      ])
+
+      const [data2] = await prisma.$transaction([
+        prisma.usersProfiles.findMany({
+          where: { userId: Number(payload.createBy) },
+        }),
+      ])
+
+
+      payload.createBy = `${data2[0].firstName} ${data2[0].lastName} ${data[0].email}`
+      Object.assign(payload, {check: false} )
 
       var lmao = await prisma.$transaction([
 
         prisma.routesPlanned.create({ data: payload })
       ]);
 
-      console.log(lmao[0].id)
 
       mappedData.forEach((item) => item.routesPlannedId = lmao[0].id)
       await prisma.$transaction([
@@ -105,7 +137,7 @@ export default class RoutesPlannedController {
 
       return { message: enumSuccess.CREATE }
     } catch (err) {
-      console.log(err.message)
+      console.log(err)
       return response.status(500).json({ message: enumErrors.ERROR_CREATE })
     }
   }
@@ -135,9 +167,12 @@ export default class RoutesPlannedController {
     try {
       const { id } = params
       const data = request.body()
+      delete data.ente
+      delete data.activity
       await prisma.routesPlanned.update({
         where: { id: Number(id) },
         data: data,
+
       })
       return { message: enumSuccess.UPDATE }
     } catch (error) {
@@ -149,6 +184,7 @@ export default class RoutesPlannedController {
   public async destroy({ params, response }: HttpContextContract) {
     try {
       const { id } = params
+
 
       await prisma.students.deleteMany({
         where: { routesPlannedId: Number(id)},
@@ -172,19 +208,22 @@ export default class RoutesPlannedController {
       const filters = await request.validate({
         schema: schema.create({
           enteId: schema.number.optional(),
-          startData: schema.string.optional(),
+          startDate: schema.string.optional(),
           endDate: schema.string.optional(),
         }),
       })
 
-      let f = {};
-      if (filters.startData && filters.endDate) {
-        Object.assign(f, { datePlanned: { lte: filters.endDate, gte: filters.startData } })
+      console.log(request)
+      var f = {};
+      if (filters.startDate && filters.endDate) {
+        Object.assign(f, {datePlanned: { lte: filters.endDate, gte: filters.startDate }} )
       }
 
       if (filters.enteId) {
         Object.assign(f, { enteId: filters.enteId });
       }
+
+      console.log(f)
 
       MapExcel.export(f);
       const files = [
