@@ -52,7 +52,7 @@ export default class RoutesPlannedController {
         }),
       ])
 
-      console.log(data)
+      //console.log(data)
       return { total, data }
 
     } catch (error) {
