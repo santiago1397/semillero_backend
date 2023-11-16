@@ -67,6 +67,7 @@
     "@wahyubucil/adonis-prisma": "^0.4.0",
     "exceljs": "^4.3.0",
     "luxon": "^3.3.0",
+    "node-fetch": "^3.3.2",
     "pg": "^8.10.0",
     "phc-argon2": "^1.1.4",
     "phc-bcrypt": "^1.0.8",

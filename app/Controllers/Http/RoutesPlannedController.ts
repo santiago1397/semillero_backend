@@ -122,16 +122,68 @@ export default class RoutesPlannedController {
       payload.createBy = `${data2[0].firstName} ${data2[0].lastName} ${data[0].email}`
       Object.assign(payload, {check: false} )
 
-      var lmao = await prisma.$transaction([
+      console.log(mappedData)
+      const allTrue  = mappedData.every(obj => {
+        return (
+          (typeof obj.codPlantel === "string")&& 
+          (typeof obj.firstName === "string")&& 
+          (typeof obj.lastName ==="string")&& 
+          (typeof obj.age ==="number"||"null")&&
+          (typeof obj.gender ==="string")&& 
+          (typeof obj.grade ==="string")&& 
+          (typeof obj.activityMade ==="string")&& 
+          (typeof obj.activityPlace ==="string")&& 
+          (typeof obj.entityInCharge ==="string")&& 
+          (typeof obj.InChargeLastName ==="string")&& 
+          (typeof obj.InChargeName ==="string")&& 
+          (typeof obj.InChargeIdentity ==="string")&& 
+          (typeof obj.InChargeCharge ==="string")&& 
+          (typeof obj.InChargePhone ==="string")&& 
+          (typeof obj.InChargeLocalPhone ==="string")&& 
+          (typeof obj.InChargeEmail ==="string")&& 
+          (typeof obj.InChargeProfession ==="string")&& 
+          (typeof obj.sizeShirt ==="string")&& 
+          (typeof obj.disability ==="string")&& 
+          (typeof obj.intitutionDirection ==="string")&& 
+          (typeof obj.intitutionEstado ==="string")&& 
+          (typeof obj.intitutionMunicipio ==="string")&& 
+          (typeof obj.intitutionParroquia ==="string")&& 
+          (typeof obj.direction ==="string")&& 
+          (typeof obj.estado ==="string")&& 
+          (typeof obj.municipio ==="string")&& 
+          (typeof obj.parroquia ==="string")&& 
+          (typeof obj.localPhone ==="string")&& 
+          (typeof obj.phone ==="string")&& 
+          (typeof obj.firstNameResponsible ==="string")&& 
+          (typeof obj.lastNameResponsible ==="string")&& 
+          (typeof obj.ageResponsible ==="number"||"null")&& 
+          (typeof obj.relationshipResponsible ==="string")&& 
+          (typeof obj.phoneResponsible ==="string")&& 
+          (typeof obj.localPhoneResponsible ==="string")&& 
+          (typeof obj.emailResponsible ==="string")&& 
+          (typeof obj.professionResponsible ==="string")
+          
+          )
+        
+      })
 
-        prisma.routesPlanned.create({ data: payload })
-      ]);
+      if(allTrue){
+        var lmao = await prisma.$transaction([
+          prisma.routesPlanned.create({ data: payload })
+        ]);
+  
+        mappedData.forEach((item) => item.routesPlannedId = lmao[0].id)
+        await prisma.$transaction([
+          prisma.students.createMany({ data: mappedData, skipDuplicates: false })
+        ]);
+
+      }else{
+        return response.status(500).json({ message: enumErrors.ERROR_CREATE })
+      }
 
 
-      mappedData.forEach((item) => item.routesPlannedId = lmao[0].id)
-      await prisma.$transaction([
-        prisma.students.createMany({ data: mappedData, skipDuplicates: false })
-      ]);
+      
+  
 
 
 
