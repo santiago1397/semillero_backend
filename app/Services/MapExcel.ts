@@ -5,7 +5,7 @@ import { Prisma } from '@prisma/client'
 import * as XLSX from 'xlsx'
 import * as fetch from 'node-fetch';
 
-process.on('uncaughtException', function (exception){
+process.on('uncaughtException', function (exception) {
   console.log(exception)
 })
 
@@ -76,22 +76,31 @@ class MapExcel {
       /* if (!(workbook1 = XLSX.readFile(file, {cellFormula: false}))) {
         return "error"
       } */
+      var testwb = XLSX.read(file, { type: 'binary' })
+      var ok = XLSX.writeFile(testwb, 'testChange.xlsx')
+
+      const testeo = testwb.Sheets[testwb.SheetNames[0]]
+
+      console.log(testeo)
+
+      console.log("about to read")
       var workbook1 = XLSX.readFile(file)
       /* const response = await fetch("test.xlsx");
       const data1 = await file1.arrayBuffer(response);
       const workbook1 = XLSX.read(data1) */
       //console.log(workbook1)
+      console.log("file done read")
 
-      
 
       /* let worksheet = workbook1.Sheets[workbook1.SheetNames[0]] */
+      console.log("taking workbook")
       let worksheet1 = workbook1.Sheets[workbook1.SheetNames[0]]
       const validation = worksheet1['A10'].v ? worksheet1['A10'].v : null
       if (validation !== '1.N°') {
         throw new Error('formato invalido')
       }
+      console.log("workbook taken successfully")
 
-      //console.log(worksheet1)
 
       // delete a specific row
       function ec(r, c) {
@@ -108,25 +117,29 @@ class MapExcel {
         ws['!ref'] = XLSX.utils.encode_range(variable.s, variable.e);
       }
 
-      delete_row(worksheet1, 0)
-      delete_row(worksheet1, 0)
-      delete_row(worksheet1, 0)
-      delete_row(worksheet1, 0)
-      delete_row(worksheet1, 0)
-      delete_row(worksheet1, 0)
-      delete_row(worksheet1, 0)
-      delete_row(worksheet1, 0)
-      delete_row(worksheet1, 0)
-      //delete_row(worksheet1, 0)
+      /* const range = XLSX.utils.decode_range(workbook1["!fullref"]);
+      console.log(range) */
 
-      const dataXlsx = XLSX.utils.sheet_to_json(worksheet1)
+      console.log("about ot delete row")
+      /* delete_row(worksheet1, 0)
+      delete_row(worksheet1, 0)
+      delete_row(worksheet1, 0)
+      delete_row(worksheet1, 0)
+      delete_row(worksheet1, 0)
+      delete_row(worksheet1, 0)
+      delete_row(worksheet1, 0)
+      delete_row(worksheet1, 0)
+      delete_row(worksheet1, 0) */
 
-      /* console.log(dataXlsx)
-      console.log(worksheet1) */
-      /* console.log(dataXlsx) 
-      console.log(validation) */
+      console.log("rows deleted")
 
-      var cleanData = [] as any
+      console.log("is the problem here?")
+      const dataXlsx: any = XLSX.utils.sheet_to_json(worksheet1)
+      console.log("no, is not here")
+
+
+
+      /* var cleanData = [] as any
       dataXlsx.forEach((item: any) => {
         cleanData.push(
           {
@@ -138,7 +151,7 @@ class MapExcel {
             gender: item['7.Sexo (Masculino o Femenino)'] ? item['7.Sexo (Masculino o Femenino)'] : '',
             grade: item['8.Grado que cursa'] ? item['8.Grado que cursa'].toString() : '',
             activityMade: item['9.Actividad realizada'] ? item['9.Actividad realizada'] : '',
-            /* activityDate: item['10.Fecha en que fue realizada la actividad'].toString(), */
+            //activityDate: item['10.Fecha en que fue realizada la actividad'].toString(), 
             activityPlace: item['11.Lugar de ocurrencia de la actividad'] ? item['11.Lugar de ocurrencia de la actividad'] : '',
             entityInCharge: item['12.Ente o institución encargada de la actividad'] ? item['12.Ente o institución encargada de la actividad'] : '',
             InChargeLastName: item['13.Apellidos encargado de la actividad realizada por el Ente'] ? item['13.Apellidos encargado de la actividad realizada por el Ente'] : '',
@@ -173,56 +186,108 @@ class MapExcel {
           }
 
         )
-      })
+      }) */
       //console.log(cleanData) 
-      /* const range = XLSX.utils.decode_range(workbook1["!fullref"]);
-      console.log(range)
+      //const range = XLSX.utils.decode_range(workbook1["!fullref"]);
+      //console.log(range)
 
-      console.log(cleanData) */
 
-      return cleanData;
-    } catch (err) {
-      return err
-    }
-  }
+      const test = [] as any
 
-  static async export(filters) {
-    let workbook = new Excel.Workbook();
-    let worksheet = workbook.addWorksheet("Hoja1");
-    let font = { name: 'Times New Roman', size: 12 };
-    worksheet.columns = [
-      { header: "No", key: "id", width: 10, style: { font: font } },
-      { header: "Nombre", key: "name", width: 40, style: { font: font } },
-      { header: "Fecha", key: "date", width: 20, style: { font: font } },
-      { header: "codPlantel", key: "codPlantel", width: 30, style: { font: font } },
-    ];
-
-    let data = await prisma.routesPlanned.findMany({
-      where: filters,
-      include: {
-        activity: true,
-        //site: true,
-        //plantel: true,
-        ente: true
+      for (var i = 2; i < dataXlsx.length - 1; i++) {
+        test.push({
+          codPlantel: dataXlsx[i].__EMPTY_1 ? dataXlsx[i].__EMPTY_1 : '',          
+          firstName: dataXlsx[i].__EMPTY_2 ? dataXlsx[i].__EMPTY_2 : '',
+          lastName: dataXlsx[i].__EMPTY_3 ? dataXlsx[i].__EMPTY_3 : '',
+          identity: dataXlsx[i].__EMPTY_4 ? dataXlsx[i].__EMPTY_4.toString() : '',
+          age: dataXlsx[i].__EMPTY_5 ? dataXlsx[i].__EMPTY_5 : null,
+          gender: dataXlsx[i].__EMPTY_6 ? dataXlsx[i].__EMPTY_6 : '',
+          grade: dataXlsx[i].__EMPTY_7 ? dataXlsx[i].__EMPTY_7.toString() : '',
+          activityMade: dataXlsx[i].__EMPTY_8 ? dataXlsx[i].__EMPTY_8 : '',
+          //activityDate: item['10.Fecha en que fue realizada la actividad'].toString(), 
+          activityPlace: dataXlsx[i].__EMPTY_10 ? dataXlsx[i].__EMPTY_10 : '',
+          entityInCharge: dataXlsx[i].__EMPTY_11 ? dataXlsx[i].__EMPTY_11 : '',
+          InChargeLastName: dataXlsx[i].__EMPTY_12 ? dataXlsx[i].__EMPTY_12 : '',
+          InChargeName: dataXlsx[i].__EMPTY_13 ? dataXlsx[i].__EMPTY_13 : '',
+          InChargeIdentity: dataXlsx[i].__EMPTY_14 ? dataXlsx[i].__EMPTY_14.toString() : '',
+          InChargeCharge: dataXlsx[i].__EMPTY_15 ? dataXlsx[i].__EMPTY_15 : '',
+          InChargePhone: dataXlsx[i].__EMPTY_16 ? dataXlsx[i].__EMPTY_16.toString() : '',
+          InChargeLocalPhone: dataXlsx[i].__EMPTY_17 ? dataXlsx[i].__EMPTY_17.toString() : '',
+          InChargeEmail: dataXlsx[i].__EMPTY_18 ? dataXlsx[i].__EMPTY_18 : '',
+          InChargeProfession: dataXlsx[i].__EMPTY_19 ? dataXlsx[i].__EMPTY_19 : '',
+          sizeShirt: dataXlsx[i].__EMPTY_20 ? dataXlsx[i].__EMPTY_20.toString() : '',
+          disability: dataXlsx[i].__EMPTY_21 ? dataXlsx[i].__EMPTY_21 : '',
+          intitutionDirection: dataXlsx[i].__EMPTY_22 ? dataXlsx[i].__EMPTY_22 : '',
+          intitutionEstado: dataXlsx[i].__EMPTY_23 ? dataXlsx[i].__EMPTY_23 : '',
+          intitutionMunicipio: dataXlsx[i].__EMPTY_24 ? dataXlsx[i].__EMPTY_24 : '',
+          intitutionParroquia: dataXlsx[i].__EMPTY_25 ? dataXlsx[i].__EMPTY_25 : '',
+          direction: dataXlsx[i].__EMPTY_26 ? dataXlsx[i].__EMPTY_26 : '',
+          estado: dataXlsx[i].__EMPTY_27 ? dataXlsx[i].__EMPTY_27 : '',
+          municipio: dataXlsx[i].__EMPTY_28 ? dataXlsx[i].__EMPTY_28 : '',
+          parroquia: dataXlsx[i].__EMPTY_29 ? dataXlsx[i].__EMPTY_29 : '',
+          localPhone: dataXlsx[i].__EMPTY_30 ? dataXlsx[i].__EMPTY_30.toString() : '',
+          phone: dataXlsx[i].__EMPTY_31 ? dataXlsx[i].__EMPTY_31.toString() : '',
+          firstNameResponsible: dataXlsx[i].__EMPTY_32 ? dataXlsx[i].__EMPTY_32 : '',
+          lastNameResponsible: dataXlsx[i].__EMPTY_33 ? dataXlsx[i].__EMPTY_33 : '',
+          identityResponsible: dataXlsx[i].__EMPTY_34 ? dataXlsx[i].__EMPTY_34.toString() : '',
+          ageResponsible: dataXlsx[i].__EMPTY_35 ? dataXlsx[i].__EMPTY_35 : null,
+          relationshipResponsible: dataXlsx[i].__EMPTY_36 ? dataXlsx[i].__EMPTY_36 : '',
+          phoneResponsible: dataXlsx[i].__EMPTY_37 ? dataXlsx[i].__EMPTY_37.toString() : '',
+          localPhoneResponsible: dataXlsx[i].__EMPTY_38 ? dataXlsx[i].__EMPTY_38.toString() : '',
+          emailResponsible: dataXlsx[i].__EMPTY_39 ? dataXlsx[i].__EMPTY_39 : '',
+          professionResponsible: dataXlsx[i].__EMPTY_40 ? dataXlsx[i].__EMPTY_40 : '',
+          
+        })
       }
-    })
 
-    let rowSekolah = data.map(async item => {
-      worksheet.addRow({
-        id: item.id,
-        name: item.name,
-        date: item.datePlanned,
-        //codPlantel: item.codPlantel
-      })
-    })
 
-    worksheet.getCell('B1', 'C1').fill = {
-      type: 'pattern', pattern: 'solid', fgColor: { argb: 'cccccc' }
+      return test;
+  } catch(err) {
+    let errorMessage = "Failed to do something exceptional";
+    if (err instanceof Error) {
+      errorMessage = err.message;
     }
-
-    await Promise.all(rowSekolah)
-    let res = workbook.xlsx.writeFile(`${Application.tmpPath('storage/')}reporte.xlsx`)
+    console.log(errorMessage);
   }
+}
+
+  static async export (filters) {
+  let workbook = new Excel.Workbook();
+  let worksheet = workbook.addWorksheet("Hoja1");
+  let font = { name: 'Times New Roman', size: 12 };
+  worksheet.columns = [
+    { header: "No", key: "id", width: 10, style: { font: font } },
+    { header: "Nombre", key: "name", width: 40, style: { font: font } },
+    { header: "Fecha", key: "date", width: 20, style: { font: font } },
+    { header: "codPlantel", key: "codPlantel", width: 30, style: { font: font } },
+  ];
+
+  let data = await prisma.routesPlanned.findMany({
+    where: filters,
+    include: {
+      activity: true,
+      //site: true,
+      //plantel: true,
+      ente: true
+    }
+  })
+
+  let rowSekolah = data.map(async item => {
+    worksheet.addRow({
+      id: item.id,
+      name: item.name,
+      date: item.datePlanned,
+      //codPlantel: item.codPlantel
+    })
+  })
+
+  worksheet.getCell('B1', 'C1').fill = {
+    type: 'pattern', pattern: 'solid', fgColor: { argb: 'cccccc' }
+  }
+
+  await Promise.all(rowSekolah)
+  let res = workbook.xlsx.writeFile(`${Application.tmpPath('storage/')}reporte.xlsx`)
+}
 }
 
 export default MapExcel;

@@ -17,15 +17,13 @@ export default class RoutesPlannedController {
         ? mapToPagination(request.qs() as IPagination)
         : ({} as IPagination)
 
-      
-      
+
 
 
       // Filters
       const filters = await request.validate({
         schema: schema.create({
           name: schema.string.optional(),
-          siteId: schema.number.optional(),
           enteId: schema.number.optional(),
           codPlantel: schema.string.optional(),
           activityId: schema.number.optional(),
@@ -52,7 +50,6 @@ export default class RoutesPlannedController {
         }),
       ])
 
-      //console.log(data)
       return { total, data }
 
     } catch (error) {
@@ -122,7 +119,7 @@ export default class RoutesPlannedController {
       payload.createBy = `${data2[0].firstName} ${data2[0].lastName} ${data[0].email}`
       Object.assign(payload, {check: false} )
 
-      console.log(mappedData)
+      /* console.log(mappedData) */
       const allTrue  = mappedData.every(obj => {
         return (
           (typeof obj.codPlantel === "string")&& 

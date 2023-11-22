@@ -11,6 +11,8 @@ export default class UsersController {
       const pagination = request.qs()
         ? mapToPagination(request.qs() as IPagination)
         : ({} as IPagination)
+        
+      console.log(request.qs())
 
       // Filters
       let filters = await request.validate({
