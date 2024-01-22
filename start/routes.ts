@@ -38,6 +38,7 @@ Route.group(() => {
 }).prefix('api')
 
 Route.group(() => {
+  Route.resource('roles', 'RolesController').apiOnly()
   Route.resource('users', 'UsersController').apiOnly()
   Route.resource('activities', 'ActivitiesController').apiOnly()
   Route.resource('managers-schools', 'ManagersSchoolsController').apiOnly()

@@ -21,24 +21,35 @@ export default class StudentsController {
           sizeShirt: schema.string.optional(),
           disability: schema.string.optional(),
           direction: schema.string.optional(),
-          estadoId: schema.string.optional(),
+          /* estadoId: schema.string.optional(),
           municipioId: schema.string.optional(),
-          parroquiaId: schema.string.optional(),
+          parroquiaId: schema.string.optional(), */
           phone: schema.string.optional(),
           localPhone: schema.string.optional(),
-          deleted: schema.boolean.optional(),
+          /* deleted: schema.boolean.optional(), */
         }),
       })
 
-      const [total, data] = await prisma.$transaction([
-        prisma.students.count({ where: filters }),
-        prisma.students.findMany({
-          ...pagination,
-          where: filters,
-        }),
+      console.log(request.qs())
+
+      const [total, femenino, masculino, preescolar, primero, segundo, tercero, cuarto, quinto, sexto, septimo, octavo, noveno] = 
+      await prisma.$transaction([
+        prisma.students.count({ where: {enteId: 32} }),
+        prisma.students.count({ where:{enteId: 32,gender: "F",}}),
+        prisma.students.count({ where:{enteId: 32,gender: "M",}}),
+        prisma.students.count({ where:{enteId: 32,grade: "Preescolar",}}),
+        prisma.students.count({ where:{enteId: 32,grade: "1ro",}}),
+        prisma.students.count({ where:{enteId: 32,grade: "2do",}}),
+        prisma.students.count({ where:{enteId: 32,grade: "3ro",}}),
+        prisma.students.count({ where:{enteId: 32,grade: "4to",}}),
+        prisma.students.count({ where:{enteId: 32,grade: "5to",}}),
+        prisma.students.count({ where:{enteId: 32,grade: "6to",}}),
+        prisma.students.count({ where:{enteId: 32,grade: "7to",}}),
+        prisma.students.count({ where:{enteId: 32,grade: "8vo",}}),
+        prisma.students.count({ where:{enteId: 32,grade: "9no",}}),
       ])
 
-      return { total, data }
+      return { total, femenino, masculino, preescolar, primero, segundo, tercero, cuarto, quinto, sexto, septimo, octavo, noveno }
     } catch (error) {
       console.log(error)
       return response.status(500).json({ message: enumErrors.DEFAULT })
@@ -53,7 +64,7 @@ export default class StudentsController {
           lastName: schema.string(),
           codPlantel: schema.string(),
           identity: schema.string(),
-          age: schema.string(),
+          age: schema.number(),
           gender: schema.string(),
           grade: schema.string(),
           /* activityMade: schema.string(),

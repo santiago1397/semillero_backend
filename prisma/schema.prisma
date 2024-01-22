@@ -35,6 +35,7 @@ model Users {
   version         Int            @default(0)
   profile         UsersProfiles?
   userRole        UsersRoles?
+  filters         String?        @default("")
 }
 
 // Perfiles de usuarios
@@ -311,6 +312,7 @@ model Students {
   localPhoneResponsible   String?
   emailResponsible        String?
   professionResponsible   String?
+  enteId                  Int           @default(0)
   routesPlannedId         Int
   routesPlanned           RoutesPlanned @relation(fields: [routesPlannedId], references: [id])
   createBy                Int           @default(0)
@@ -342,6 +344,9 @@ model RoutesPlanned {
   observations  String?
   fileExtension String?
   check         Boolean?
+  estadoId      String     @default("")
+  municipioId   String     @default("")
+  parroquiaId   String     @default("")
   //siteId               Int
   //site                 TypeSites  @relation(fields: [siteId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   //codPlantel           String
