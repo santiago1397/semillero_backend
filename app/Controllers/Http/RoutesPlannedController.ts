@@ -60,6 +60,11 @@ export default class RoutesPlannedController {
           prisma.routesPlanned.count({ where: filters }),
           prisma.routesPlanned.findMany({
             ...pagination,
+            orderBy: [
+              {
+                id: 'desc'
+              }
+            ],
             include: {
               activity: true,
               //site: true,
@@ -92,7 +97,6 @@ export default class RoutesPlannedController {
         finaldata =data
       }
 
-      console.log(finaldata)
 
       return {total: finaltotal, data: finaldata }
 
@@ -103,6 +107,9 @@ export default class RoutesPlannedController {
   }
 
   public async store({ request, response }: HttpContextContract) {
+
+    var result
+    var lmao
     try {
       let uploaded = await File.upload(request);
       
@@ -218,14 +225,14 @@ export default class RoutesPlannedController {
       })
 
       if (true) {
-        var lmao = await prisma.$transaction([
+        lmao = await prisma.$transaction([
           prisma.routesPlanned.create({ data: payload })
         ]);
 
         /* console.log(mappedData[0].enteId) */
 
         mappedData.forEach((item) => item.routesPlannedId = lmao[0].id)
-        await prisma.$transaction([
+        result = await prisma.$transaction([
           prisma.students.createMany({ data: mappedData, skipDuplicates: false })
         ]);
 
@@ -242,6 +249,14 @@ export default class RoutesPlannedController {
       return { message: enumSuccess.CREATE }
     } catch (err) {
       console.log(err)
+
+      if(result == undefined){
+        console.log("si esta entrando?")
+        await prisma.routesPlanned.delete({
+          where: { id: Number(lmao[0].id) },
+        })
+      }
+      
       return response.status(500).json({ message: enumErrors.ERROR_CREATE })
     }
   }
